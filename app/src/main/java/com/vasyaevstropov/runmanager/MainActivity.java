@@ -1,7 +1,10 @@
 package com.vasyaevstropov.runmanager;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +28,33 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Button btnStart;
-    TextView tvCurrentLocation;
+    TextView tvCurrentLocation, tvSpeed;
     public static boolean startGpsService = false;
+    private BroadcastReceiver broadcastReceiver;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (broadcastReceiver == null){
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
+                    tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+                }
+            };
+        }
+        registerReceiver (broadcastReceiver, new IntentFilter("location_update"));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (broadcastReceiver !=null){
+            unregisterReceiver(broadcastReceiver);
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +74,7 @@ public class MainActivity extends AppCompatActivity
 
         btnStart = (Button)findViewById(R.id.btnStart);
         tvCurrentLocation = (TextView)findViewById(R.id.tvCoordinates);
+        tvSpeed = (TextView) findViewById(R.id.tvSpeed);
 
 
         if (!runtimePermission())
@@ -59,15 +88,22 @@ public class MainActivity extends AppCompatActivity
                 if (!MainActivity.startGpsService) {
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     startService(intent);
-                    MainActivity.startGpsService=true;
+                    btnStart.setText("STOP");
+                    
+                    startStopWatch(MainActivity.startGpsService=true);
                 }else {
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     stopService(intent);
-                    MainActivity.startGpsService=false;
+                    btnStart.setText("START");
+
+                    startStopWatch(MainActivity.startGpsService=false);
                 }
 
             }
         });
+    }
+
+    private void startStopWatch(boolean b) {
     }
 
     private boolean runtimePermission() {
