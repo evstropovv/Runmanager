@@ -51,4 +51,23 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="76dp"
         android:id="@+id/tvCoordinates" />
+
+    <Button
+        android:id="@+id/btnRead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btnStart"
+        android:layout_alignRight="@+id/btnStart"
+        android:layout_below="@+id/btnStart"
+        android:layout_marginTop="15dp"
+        android:text="Read DB" />
+
+    <Button
+        android:id="@+id/btnDeleteDB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="deleteDB"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
