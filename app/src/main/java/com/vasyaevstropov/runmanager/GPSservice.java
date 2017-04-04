@@ -166,6 +166,7 @@ public class GPSservice extends Service {
         if (c.moveToLast()) {
             int columnID = c.getColumnIndex("id");
             lastNumberRecord = Integer.parseInt(c.getString(columnID));
+            ++lastNumberRecord;
         }
 
         db.close();

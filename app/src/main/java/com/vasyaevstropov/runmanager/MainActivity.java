@@ -34,7 +34,7 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button btnStart, btnRead, btnDeleteDB;
+    Button btnStart, btnRead, btnDeleteDB, btnMapTest;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
     public static boolean startGpsService = false;
@@ -86,6 +86,14 @@ public class MainActivity extends AppCompatActivity
         tvCurrentLocation = (TextView)findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
+        btnMapTest = (Button)findViewById(R.id.btnTestMap);
+        btnMapTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentMapTest = new Intent(v.getContext(), MapRunActivity.class);
+                startActivity(intentMapTest);
+            }
+        });
 
         createTimer();
 
@@ -199,14 +207,10 @@ public class MainActivity extends AppCompatActivity
                                 ", dayofweek = " + c2.getString(dayofweek) +
                                 ", date = " + c2.getString(date) +
                                 ", distance = " + c2.getString(distance));
-
                 // переход на следующую строку
                 // а если следующей нет (текущая - последняя), то false - выходим из цикла
             } while (c2.moveToNext());
-
         }
-
-
 
         db.close();
     }
@@ -266,6 +270,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingIntent = new Intent(this, SettingActivity.class);
+            startActivityForResult(settingIntent,150);
+
             return true;
         }
 
@@ -281,6 +288,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+            Intent settingIntent = new Intent(this, SettingActivity.class);
+            startActivityForResult(settingIntent,150);
 
         } else if (id == R.id.nav_slideshow) {
 
