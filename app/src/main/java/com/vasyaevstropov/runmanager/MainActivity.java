@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         btnMapTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMapTest = new Intent(v.getContext(), MapRunActivity.class);
+                Intent intentMapTest = new Intent(v.getContext(), RunListActivity.class);
                 startActivity(intentMapTest);
             }
         });
@@ -225,8 +225,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean runtimePermission() { //запрос у пользователя разрешений на GPS для андроид 6.0 +
-        if (Build.VERSION.SDK_INT >=23 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+        if (Build.VERSION.SDK_INT >=23
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    100);
             return true;
         }
         return false;
@@ -236,7 +244,11 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { //перехват ответа на разрешения
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode==100){
-            if (grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
+            if (grantResults[0]==PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1]==PackageManager.PERMISSION_GRANTED &&
+                    grantResults[2]==PackageManager.PERMISSION_GRANTED&&
+                    grantResults[3]==PackageManager.PERMISSION_GRANTED&&
+                    grantResults[4]==PackageManager.PERMISSION_GRANTED){
                 enableButtons();
             }else{ //показываем окно, пока не получим разрешения.
                 runtimePermission();
