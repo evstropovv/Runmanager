@@ -9,11 +9,24 @@
     tools:showIn="@layout/activity_setting">
 
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="TEXT-TEXT"
-        android:textSize="50sp"
-        android:id="@+id/tvTEST"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvTEST"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TEXT-TEXT"
+            android:textSize="50sp" />
+
+        <NumberPicker
+            android:id="@+id/numberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
 
 </RelativeLayout>

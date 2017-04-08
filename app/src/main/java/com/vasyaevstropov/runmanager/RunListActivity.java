@@ -32,6 +32,8 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
         googleMap.addMarker(new MarkerOptions().position(new LatLng(37.35, -122.0)).title("Hello!!!")); //обычный маркер
 
         PolylineOptions rectOptions = new PolylineOptions() //рисуем связные линии
+
+
                 .add(new LatLng(37.35, -122.0))
                 .add(new LatLng(37.45, -122.0))
                 .add(new LatLng(37.45, -122.2))
@@ -39,6 +41,14 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
                 .add(new LatLng(37.55, -122.2))
                 .add(new LatLng(37.35, -122.0))
                 ;
+
+        PolylineOptions polylineOption = new PolylineOptions();
+        for (int i = 0; i <200 ; i++) {
+            polylineOption.add(new LatLng(37.35+i*0.01, -122.0+i*0.045));
+        }
+        polylineOption.color(getResources().getColor(R.color.colorAccent));
+        googleMap.addPolyline(polylineOption);
+
 
         googleMap.addPolyline(rectOptions);  ///добавляем на карту..
 

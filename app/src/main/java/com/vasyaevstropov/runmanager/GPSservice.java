@@ -34,7 +34,7 @@ public class GPSservice extends Service {
     SQLiteDatabase db;
     Calendar calendar;
     int dayOfWeek;
-    int date;
+    String date;
     double sumdistance = 0;
 
     @Nullable
@@ -49,7 +49,7 @@ public class GPSservice extends Service {
         //дата и время на момент старта
         calendar = Calendar.getInstance();
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        date = calendar.get(Calendar.DATE);
+        date = calendar.get(Calendar.DATE)+"."+calendar.get(Calendar.MONTH)+"."+calendar.get(Calendar.YEAR) ;
 
 
         //подключаем к БД
@@ -130,7 +130,7 @@ public class GPSservice extends Service {
        // cv.put("numberrecord", getLastNumberRecord(db,dbOpenHelper)); // не нужен!!! надо будет вытягивать последний ID и к нему +1   ;
         cv.put("dayofweek",dayOfWeek ); //Воскресенье показівает как первый день.
         cv.put("date",date ); //текущий день месяца показывает
-        cv.put("distance", sumdistance); //все правильно показывает
+        cv.put("distance", sumdistance + " км");
 
         db.close();
 
@@ -170,7 +170,6 @@ public class GPSservice extends Service {
         }
 
         db.close();
-
         return lastNumberRecord;
     }
 }

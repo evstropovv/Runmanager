@@ -17,31 +17,32 @@
         android:text="START"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:id="@+id/btnStart"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:text="0 km/h"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnStart"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="66dp"
+        android:layout_marginBottom="63dp"
         android:id="@+id/tvSpeed"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:layout_above="@+id/btnStart"
+        android:layout_alignRight="@+id/tvCoordinates"
+        android:layout_alignEnd="@+id/tvCoordinates" />
 
     <TextView
         android:text="0:00:00"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="41dp"
         android:id="@+id/tvTime"
+        android:textStyle="normal|bold"
+        android:textSize="30sp"
         android:layout_above="@+id/tvSpeed"
         android:layout_centerHorizontal="true"
-        android:textStyle="normal|bold"
-        android:textSize="30sp" />
+        android:layout_marginBottom="43dp" />
 
     <TextView
         android:text="coordinates"
@@ -56,11 +57,11 @@
         android:id="@+id/btnRead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/btnStart"
-        android:layout_alignRight="@+id/btnStart"
+        android:layout_marginTop="16dp"
+        android:text="Read DB"
         android:layout_below="@+id/btnStart"
-        android:layout_marginTop="15dp"
-        android:text="Read DB" />
+        android:layout_alignLeft="@+id/btnStart"
+        android:layout_alignStart="@+id/btnStart" />
 
     <Button
         android:id="@+id/btnDeleteDB"
@@ -79,4 +80,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="MAP TEST" />
+
+    <Button
+        android:id="@+id/btnRecycler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btnRead"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/btnRead"
+        android:text="RECYCLER" />
 </RelativeLayout>

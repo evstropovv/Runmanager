@@ -34,7 +34,7 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button btnStart, btnRead, btnDeleteDB, btnMapTest;
+    Button btnStart, btnRead, btnDeleteDB, btnMapTest, btnRecycler;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
     public static boolean startGpsService = false;
@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         btnStart = (Button)findViewById(R.id.btnStart);
         btnRead = (Button)findViewById(R.id.btnRead);
+        btnRecycler = (Button)findViewById(R.id.btnRecycler);
+        btnRecycler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), CardListActivity.class);
+                startActivity(intent);
+            }
+        });
         btnDeleteDB = (Button)findViewById(R.id.btnDeleteDB);
         tvCurrentLocation = (TextView)findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
