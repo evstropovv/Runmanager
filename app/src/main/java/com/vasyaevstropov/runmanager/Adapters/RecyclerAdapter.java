@@ -1,19 +1,13 @@
 package com.vasyaevstropov.runmanager.Adapters;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.RunListActivity;
 
@@ -51,18 +45,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_run, parent, false);
-
+        final ViewHolder vh = new ViewHolder(view);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+               // Toast.makeText(v.getContext(), vh.getAdapterPosition()+"", Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(v.getContext(), RunListActivity.class);
+                intent.putExtra("number", vh.getAdapterPosition()+1);
                 v.getContext().startActivity(intent);
             }
         });
-
-        ViewHolder vh = new ViewHolder(view);
         return vh;
     }
 
@@ -71,9 +67,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.tvDistance.setText(distanceList.get(position));
         holder.tvDayOfWeek.setText(dayOfWeek[Integer.parseInt(dayOfWeekList.get(position))-1]);
         holder.tvDate.setText(dateList.get(position));
-
     }
-
 
     @Override
     public int getItemCount() {
