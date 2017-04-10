@@ -130,7 +130,7 @@ public class GPSservice extends Service {
        // cv.put("numberrecord", getLastNumberRecord(db,dbOpenHelper)); // не нужен!!! надо будет вытягивать последний ID и к нему +1   ;
         cv.put("dayofweek",dayOfWeek ); //Воскресенье показівает как первый день.
         cv.put("date",date ); //текущий день месяца показывает
-        cv.put("distance", sumdistance + " км");
+        cv.put("distance", sumdistance);
 
         db.close();
 

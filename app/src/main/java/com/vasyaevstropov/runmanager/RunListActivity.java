@@ -21,8 +21,9 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import java.util.ArrayList;
 
 public class RunListActivity extends AppCompatActivity implements OnMapReadyCallback {
-Integer number;
+    Integer number;
     PolylineOptions rectOptions;
+    Double long1, lat1, long2, lat2;
 
 
     @Override
@@ -48,49 +49,15 @@ Integer number;
     public void onMapReady(GoogleMap googleMap) {
 
         loadPolilyne(number, googleMap);
-
-
-
-
-//        googleMap.addMarker(new MarkerOptions().position(new LatLng(37.35, -122.0)).title("Hello!!!")); //обычный маркер
-//
-//        PolylineOptions rectOptions = new PolylineOptions() //рисуем связные линии
-//
-//
-//                .add(new LatLng(37.35, -122.0))
-//                .add(new LatLng(37.45, -122.0))
-//                .add(new LatLng(37.45, -122.2))
-//                .add(new LatLng(37.35, -122.2))
-//                .add(new LatLng(37.55, -122.2))
-//                .add(new LatLng(37.35, -122.0))
-//                ;
-//
-//        PolylineOptions polylineOption = new PolylineOptions();
-//        for (int i = 0; i <200 ; i++) {
-//            polylineOption.add(new LatLng(37.35+i*0.01, -122.0+i*0.045));
-//        }
-//        polylineOption.color(getResources().getColor(R.color.colorAccent));
-//        googleMap.addPolyline(polylineOption);
-//
-//
-//        googleMap.addPolyline(rectOptions);  ///добавляем на карту..
-//
-//        CameraPosition cameraPosition = new CameraPosition.Builder() //позиция камеры
-//                        .target(new LatLng(37.35, -122.0)) //центральная точка
-//                        .bearing(45) //ориентация
-//                        .tilt(90) //наклон
-//                        .zoom(googleMap.getCameraPosition().zoom)
-//                        .build();
-//        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
-//        googleMap.animateCamera(cameraUpdate);
-//
-//        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.35, -122.0), 10.5f), 1000, null); //зум камеры: (точка на карте, x-zoom, длительность анимации, нулл - )
-
-
     }
 
     private void loadPolilyne(Integer number, GoogleMap googleMap) {
-        googleMap.addPolyline(readDB(number));
+
+        googleMap.addPolyline(readDB(number)); //Добавляем линию движения
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat1, long1)).title("Начальная точка")); //маркер 1й точки
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, long2)).title("Конечная точка")); //маркер 2й точки
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((lat1+lat2)/2, (long1+long2)/2), 11.5f), 5000, null); //приближение
+
     }
 
     private PolylineOptions readDB(Integer numb) {
@@ -108,10 +75,13 @@ Integer number;
             int latitude = c.getColumnIndex("latitude");
             int speed = c.getColumnIndex("speed");
             int time = c.getColumnIndex("time");
+            long1 = Double.valueOf(c.getString(longitude)); //координаты самой первой точки
+            lat1 = Double.valueOf(c.getString(latitude));  //координаты самой первой точки
+
             do {
 
-                
-                 rectOptions.add(new LatLng(Double.valueOf(c.getString(longitude)), Double.valueOf(c.getString(latitude))));
+
+                 rectOptions.add(new LatLng(Double.valueOf(c.getString(latitude)),Double.valueOf(c.getString(longitude))));
                 // получаем значения по номерам столбцов и пишем все в лог
                 Log.d("LOG_TAG",
                         "ID = " + c.getInt(id) +
@@ -124,6 +94,10 @@ Integer number;
 
                 // переход на следующую строку
                 // а если следующей нет (текущая - последняя), то false - выходим из цикла
+                if (c.isLast()) {
+                    long2 = Double.valueOf(c.getString(longitude)); //координаты последней точки
+                    lat2 = Double.valueOf(c.getString(latitude));  //координаты последней точки
+                }
             } while (c.moveToNext());
 
         }

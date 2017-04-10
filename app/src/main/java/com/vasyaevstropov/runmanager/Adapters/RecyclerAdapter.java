@@ -12,6 +12,7 @@ import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.RunListActivity;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>  {
 
@@ -64,7 +65,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvDistance.setText(distanceList.get(position));
+        String formatedDistance = String.format(Locale.US,"%.2f", Double.parseDouble(distanceList.get(position))); //уменьшаем дистанцию до 2ух знаков после запятой.
+
+
+        holder.tvDistance.setText(formatedDistance + " km");
         holder.tvDayOfWeek.setText(dayOfWeek[Integer.parseInt(dayOfWeekList.get(position))-1]);
         holder.tvDate.setText(dateList.get(position));
     }
