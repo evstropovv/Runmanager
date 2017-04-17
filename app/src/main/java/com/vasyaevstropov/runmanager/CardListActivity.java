@@ -13,6 +13,10 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 
 import java.util.ArrayList;
 
+
+//Активити используется для
+//отображения списка сохраненных пробежек
+
 public class CardListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerAdapter;
@@ -40,7 +44,7 @@ public class CardListActivity extends AppCompatActivity {
         recyclerView = (RecyclerView)findViewById(R.id.my_recycler_view);
         recyclerLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerLayoutManager);
-        recyclerAdapter = new RecyclerAdapter(dayOfWeekList, dateList, distanceList, numberRecordList);
+        recyclerAdapter = new RecyclerAdapter(this, dayOfWeekList, dateList, distanceList, numberRecordList);
         recyclerView.setAdapter(recyclerAdapter);
 
     }

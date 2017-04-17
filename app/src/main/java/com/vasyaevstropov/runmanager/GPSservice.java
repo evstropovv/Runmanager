@@ -19,9 +19,13 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 
 import java.util.Calendar;
 
-/**
- * Created by Вася on 01.04.2017.
- */
+//Сервис используется для:
+//1) определения текущих координат.
+//2) Сохранения этих координат в БД
+//3) Определения расстояния между точками и сохранение этого расстояния в БД.
+
+
+
 
 public class GPSservice extends Service {
 

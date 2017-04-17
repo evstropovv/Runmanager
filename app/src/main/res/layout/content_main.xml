@@ -73,15 +73,6 @@
         android:layout_alignParentEnd="true" />
 
     <Button
-        android:id="@+id/btnTestMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="MAP TEST" />
-
-    <Button
         android:id="@+id/btnRecycler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

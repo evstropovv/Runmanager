@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 
+//Главное окно программы
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 

@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+
+//Фрагмент необходим для отображения карты.
+
+
 public class MapFragment extends SupportMapFragment {
 
     @Override

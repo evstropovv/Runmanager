@@ -20,6 +20,10 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 
 import java.util.ArrayList;
 
+//Активити для отображения карты.
+//метод readDB - наверное надо запихнуть в другой поток.
+
+
 public class RunListActivity extends AppCompatActivity implements OnMapReadyCallback {
     Integer number;
     PolylineOptions rectOptions;
@@ -54,8 +58,8 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
     private void loadPolilyne(Integer number, GoogleMap googleMap) {
 
         googleMap.addPolyline(readDB(number)); //Добавляем линию движения
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat1, long1)).title("Начальная точка")); //маркер 1й точки
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, long2)).title("Конечная точка")); //маркер 2й точки
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat1, long1)).title(getResources().getString(R.string.point1))); //маркер 1й точки
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, long2)).title(getResources().getString(R.string.point2))); //маркер 2й точки
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((lat1+lat2)/2, (long1+long2)/2), 11.5f), 5000, null); //приближение
 
     }
@@ -79,8 +83,6 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
             lat1 = Double.valueOf(c.getString(latitude));  //координаты самой первой точки
 
             do {
-
-
                  rectOptions.add(new LatLng(Double.valueOf(c.getString(latitude)),Double.valueOf(c.getString(longitude))));
                 // получаем значения по номерам столбцов и пишем все в лог
                 Log.d("LOG_TAG",
@@ -99,7 +101,6 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
                     lat2 = Double.valueOf(c.getString(latitude));  //координаты последней точки
                 }
             } while (c.moveToNext());
-
         }
     return rectOptions;
     }
