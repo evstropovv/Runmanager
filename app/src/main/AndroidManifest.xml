@@ -35,17 +35,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingActivity"
+            android:name=".Activities.SettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RunListActivity" />
+        <activity android:name=".Activities.RunListActivity" />
 
-        <service android:name=".GPSservice" />
+        <service android:name=".Services.GPSservice" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCWO9bAxj87GA5FPQAiPlcfYDrD2jm2Tpk" />
 
-        <activity android:name=".CardListActivity"></activity>
+        <activity android:name=".Activities.CardListActivity"></activity>
     </application>
 
 </manifest>

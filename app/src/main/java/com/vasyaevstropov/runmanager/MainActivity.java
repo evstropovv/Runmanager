@@ -12,8 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -29,13 +27,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vasyaevstropov.runmanager.Activities.CardListActivity;
+import com.vasyaevstropov.runmanager.Activities.SettingActivity;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.Services.GPSservice;
 
 //Главное окно программы
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button btnStart, btnRead, btnDeleteDB, btnMapTest, btnRecycler;
+    Button btnStart, btnRead, btnDeleteDB, btnRecycler;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
     public static boolean startGpsService = false;
@@ -95,14 +96,7 @@ public class MainActivity extends AppCompatActivity
         tvCurrentLocation = (TextView)findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
-        btnMapTest = (Button)findViewById(R.id.btnTestMap);
-        btnMapTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentMapTest = new Intent(v.getContext(), RunListActivity.class);
-                startActivity(intentMapTest);
-            }
-        });
+
 
         createTimer();
 

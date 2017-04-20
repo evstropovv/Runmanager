@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/map_fragment"
-        android:name="com.vasyaevstropov.runmanager.MapFragment"
+        android:name="com.vasyaevstropov.runmanager.Activities.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

@@ -1,4 +1,4 @@
-package com.vasyaevstropov.runmanager;
+package com.vasyaevstropov.runmanager.Activities;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.R;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,6 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
     Integer number;
     PolylineOptions rectOptions;
     Double long1, lat1, long2, lat2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +45,7 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
             this.number = bundle.getInt("number");
         }
         readDB(number);
-
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -102,6 +100,7 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             } while (c.moveToNext());
         }
+        c.close();
     return rectOptions;
     }
 }

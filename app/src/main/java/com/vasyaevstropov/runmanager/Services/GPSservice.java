@@ -1,4 +1,4 @@
-package com.vasyaevstropov.runmanager;
+package com.vasyaevstropov.runmanager.Services;
 
 import android.app.Service;
 import android.content.ContentValues;
@@ -14,8 +14,10 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.Models.Coordinates;
 
 import java.util.Calendar;
 
@@ -24,11 +26,7 @@ import java.util.Calendar;
 //2) Сохранения этих координат в БД
 //3) Определения расстояния между точками и сохранение этого расстояния в БД.
 
-
-
-
 public class GPSservice extends Service {
-
 
     private LocationManager locationManager;
     private LocationListener listener;
@@ -47,7 +45,6 @@ public class GPSservice extends Service {
         return null;
     }
 
-
     @Override
     public void onCreate() {
         //дата и время на момент старта
@@ -55,19 +52,13 @@ public class GPSservice extends Service {
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         date = calendar.get(Calendar.DATE)+"."+calendar.get(Calendar.MONTH)+"."+calendar.get(Calendar.YEAR) ;
 
-
         //подключаем к БД
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
-
         lastNumberRecord = getLastNumberRecord(db,dbOpenHelper);
-
         listener = new LocationListener() {
-            SQLiteDatabase db;
-            ContentValues cv = new ContentValues();
             @Override
             public void onLocationChanged(Location location) {
                 double speed = 0;
-
                 Intent i = new Intent("location_update");
                 if ((lastX==0)&&(lastY==0)) {
                     lastX = location.getLongitude();
@@ -84,15 +75,9 @@ public class GPSservice extends Service {
                 i.putExtra("speed", speed);
                 sendBroadcast(i);
 
-                cv.put("numberrecord",lastNumberRecord); //номер записи
-                cv.put("namerecord",""); //название записи
-                cv.put("longitude",lastX); //долгота
-                cv.put("latitude", lastY); //широта
-                cv.put("speed", speed); //скорость
-                cv.put("time",12);//время
-
-                db = dbOpenHelper.getWritableDatabase();
-                db.insert("speedtable",null,cv);
+                //Записываем в базу координаты...
+                long m = dbOpenHelper.insertStudent(new Coordinates(String.valueOf(lastNumberRecord), "", String.valueOf(lastX), String.valueOf(lastY), String.valueOf(speed), "12"));
+                Toast.makeText(getBaseContext(), m+"", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -115,7 +100,6 @@ public class GPSservice extends Service {
         locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,3000, 0, listener);
 
-        dbOpenHelper.close();
     }
 
     @Override
@@ -131,16 +115,14 @@ public class GPSservice extends Service {
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         ContentValues cv = new ContentValues();
-       // cv.put("numberrecord", getLastNumberRecord(db,dbOpenHelper)); // не нужен!!! надо будет вытягивать последний ID и к нему +1   ;
+
         cv.put("dayofweek",dayOfWeek ); //Воскресенье показівает как первый день.
         cv.put("date",date ); //текущий день месяца показывает
         cv.put("distance", sumdistance);
 
-        db.close();
-
         db = dbOpenHelper.getWritableDatabase();
         db.insert("segmenttable", null, cv);
-        db.close();
+
     }
 
     public static double distance(double lat1, double lat2, double lon1,
@@ -173,7 +155,6 @@ public class GPSservice extends Service {
             ++lastNumberRecord;
         }
 
-        db.close();
         return lastNumberRecord;
     }
 }

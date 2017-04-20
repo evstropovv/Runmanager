@@ -1,4 +1,4 @@
-package com.vasyaevstropov.runmanager;
+package com.vasyaevstropov.runmanager.Activities;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.vasyaevstropov.runmanager.Adapters.RecyclerAdapter;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.R;
 
 import java.util.ArrayList;
 
