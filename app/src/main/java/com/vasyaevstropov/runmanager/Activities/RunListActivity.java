@@ -25,9 +25,9 @@ import java.util.ArrayList;
 
 
 public class RunListActivity extends AppCompatActivity implements OnMapReadyCallback {
-    Integer number;
-    Double long1, lat1, long2, lat2;
-    DBOpenHelper dbOpenHelper;
+    private Integer number;
+    private Double long1, lat1, long2, lat2;
+    private DBOpenHelper dbOpenHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

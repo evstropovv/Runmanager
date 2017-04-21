@@ -12,7 +12,9 @@ public class Coordinates {
     public static final String COLUMN_SPEED = "speed";
     public static final String COLUMN_TIME = "time";
 
+
     public static final String TABLE_NAME_SEGMENT = "segmenttable";
+
     public static final String COLUMN_DAYOFWEEK = "dayofweek";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_DISTANCE = "distance";
@@ -35,7 +37,6 @@ public class Coordinates {
         this.distance = distance;
     }
 
-
     public long getId() {
         return id;
     }
@@ -48,71 +49,36 @@ public class Coordinates {
         return numberRecord;
     }
 
-    public void setNumberRecord(String numberRecord) {
-        this.numberRecord = numberRecord;
-    }
-
     public String getNameRecord() {
         return nameRecord;
-    }
-
-    public void setNameRecord(String nameRecord) {
-        this.nameRecord = nameRecord;
     }
 
     public String getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
     public String getLatitude() {
         return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
     }
 
     public String getSpeed() {
         return speed;
     }
 
-    public void setSpeed(String speed) {
-        this.speed = speed;
-    }
-
     public String getTime() {
         return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public String getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
     public String getDate() {
         return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public String getDistance() {
         return distance;
     }
 
-    public void setDistance(String distance) {
-        this.distance = distance;
-    }
 }

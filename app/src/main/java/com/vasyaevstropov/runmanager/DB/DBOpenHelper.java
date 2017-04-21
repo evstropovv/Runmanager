@@ -14,7 +14,7 @@ import com.vasyaevstropov.runmanager.Models.Coordinates;
 import java.util.ArrayList;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
-    Double long1, lat1, long2, lat2;
+    private Double long1, lat1, long2, lat2;
     public DBOpenHelper(Context context) {
         super(context, "DBcoordinates", null, 1);
     }
@@ -65,9 +65,8 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    private void writeToSegmentTable(Coordinates coordinates) {
+    public void writeToSegmentTable(Coordinates coordinates) {
         SQLiteDatabase db = getWritableDatabase();
-
         try{
             ContentValues cv = new ContentValues();
             cv.put(Coordinates.COLUMN_DAYOFWEEK,coordinates.getDayOfWeek()); //Воскресенье показівает как первый день.
@@ -75,20 +74,17 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             cv.put(Coordinates.COLUMN_DISTANCE, coordinates.getDistance());
             db.insert(Coordinates.TABLE_NAME_SEGMENT, null, cv);
         }catch (Exception e){}
-
     }
 
     public int getLastNumberRecord(SQLiteDatabase db) { //получаем последний ИД записанный в Segmenttable
         int lastNumberRecord =1;
-
-        Cursor c = db.rawQuery("SELECT * FROM "+Coordinates.TABLE_NAME_SEGMENT,null);
-
-        if (c.moveToLast()) {
-            int columnID = c.getColumnIndex(Coordinates.COLUMN_ID);
-            lastNumberRecord = Integer.parseInt(c.getString(columnID));
-            ++lastNumberRecord;
-        }
         try{
+        Cursor c = db.rawQuery("SELECT * FROM "+Coordinates.TABLE_NAME_SEGMENT,null);
+            if (c.moveToLast()) {
+                int columnID = c.getColumnIndex(Coordinates.COLUMN_ID);
+                lastNumberRecord = Integer.parseInt(c.getString(columnID));
+                ++lastNumberRecord;
+            }
             c.close();
         }catch (Exception e){e.printStackTrace();}
 

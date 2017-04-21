@@ -31,7 +31,7 @@ public class GPSservice extends Service {
     private LocationManager locationManager;
     private LocationListener listener;
     private double lastX = 0, lastY = 0;
-    int lastNumberRecord;
+    int lastNumberRecord =0;
 
     SQLiteDatabase db;
     Calendar calendar;
@@ -54,7 +54,7 @@ public class GPSservice extends Service {
 
         //подключаем к БД
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
-        lastNumberRecord = getLastNumberRecord(db,dbOpenHelper);
+        lastNumberRecord = dbOpenHelper.getLastNumberRecord(db);
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -114,16 +114,7 @@ public class GPSservice extends Service {
 
     private void writeToSegmentTable() {
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
-        SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
-        ContentValues cv = new ContentValues();
-
-        cv.put("dayofweek",dayOfWeek ); //Воскресенье показівает как первый день.
-        cv.put("date",date ); //текущий день месяца показывает
-        cv.put("distance", sumdistance);
-
-        db = dbOpenHelper.getWritableDatabase();
-        db.insert("segmenttable", null, cv);
-
+        dbOpenHelper.writeToSegmentTable(new Coordinates(String.valueOf(dayOfWeek), String.valueOf(date), String.valueOf(sumdistance) )); //dayOfWeek Date Distnace
     }
 
     public static double distance(double lat1, double lat2, double lon1,
@@ -141,20 +132,5 @@ public class GPSservice extends Service {
         distance = Math.pow(distance, 2);
 
         return Math.sqrt(distance);
-    }
-
-
-    public int getLastNumberRecord(SQLiteDatabase db, DBOpenHelper dbOpenHelper) { //получаем последний ИД записанный в Segmenttable
-        int lastNumberRecord =1;
-
-        db = dbOpenHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM "+Coordinates.TABLE_NAME_SEGMENT,null);
-
-        if (c.moveToLast()) {
-            int columnID = c.getColumnIndex(Coordinates.COLUMN_ID);
-            lastNumberRecord = Integer.parseInt(c.getString(columnID));
-            ++lastNumberRecord;
-        }
-        return lastNumberRecord;
     }
 }
