@@ -65,7 +65,7 @@ public class GPSservice extends Service {
                     lastY = location.getLatitude();
                 }
                 double dist =distance(location.getLongitude(), lastX, location.getLatitude(), lastY);
-                speed = dist*1200; //скорсоть
+                speed = dist/3/3600*1000*10000; //скорсоть = dist*1200
                 sumdistance = sumdistance + dist;
 
                 lastX = location.getLongitude();
@@ -98,6 +98,7 @@ public class GPSservice extends Service {
             }
         };
         locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        //noinspection MissingPermission
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,3000, 0, listener);
 
     }
@@ -147,14 +148,13 @@ public class GPSservice extends Service {
         int lastNumberRecord =1;
 
         db = dbOpenHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM segmenttable",null);
+        Cursor c = db.rawQuery("SELECT * FROM "+Coordinates.TABLE_NAME_SEGMENT,null);
 
         if (c.moveToLast()) {
-            int columnID = c.getColumnIndex("id");
+            int columnID = c.getColumnIndex(Coordinates.COLUMN_ID);
             lastNumberRecord = Integer.parseInt(c.getString(columnID));
             ++lastNumberRecord;
         }
-
         return lastNumberRecord;
     }
 }

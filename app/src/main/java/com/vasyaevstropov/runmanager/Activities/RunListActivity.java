@@ -22,13 +22,12 @@ import com.vasyaevstropov.runmanager.R;
 import java.util.ArrayList;
 
 //Активити для отображения карты.
-//метод readDB - наверное надо запихнуть в другой поток.
 
 
 public class RunListActivity extends AppCompatActivity implements OnMapReadyCallback {
     Integer number;
-    PolylineOptions rectOptions;
     Double long1, lat1, long2, lat2;
+    DBOpenHelper dbOpenHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,63 +43,30 @@ public class RunListActivity extends AppCompatActivity implements OnMapReadyCall
         if (bundle!=null){
             this.number = bundle.getInt("number");
         }
-        readDB(number);
+        dbOpenHelper = new DBOpenHelper(this);
+
+        getFirstLastPoints();
+    }
+
+    private void getFirstLastPoints() {
+        ArrayList<Double> firstlastArray = dbOpenHelper.getFirstLastPoint(number);
+        //long1 lat1 long2 lat2
+        long1 = firstlastArray.get(0);
+        lat1 = firstlastArray.get(1);
+        long2 = firstlastArray.get(2);
+        lat2 = firstlastArray.get(3);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         loadPolilyne(number, googleMap);
     }
 
     private void loadPolilyne(Integer number, GoogleMap googleMap) {
-
-        googleMap.addPolyline(readDB(number)); //Добавляем линию движения
+        googleMap.addPolyline(dbOpenHelper.readDB(number)); //Добавляем линию движения
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lat1, long1)).title(getResources().getString(R.string.point1))); //маркер 1й точки
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, long2)).title(getResources().getString(R.string.point2))); //маркер 2й точки
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((lat1+lat2)/2, (long1+long2)/2), 11.5f), 5000, null); //приближение
-
-    }
-
-    private PolylineOptions readDB(Integer numb) {
-        rectOptions = new PolylineOptions();
-        DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
-        SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
-        Cursor c = db.query("speedtable", null, "numberrecord="+numb, null, null, null, null); //делаем выборку элементов со значением numberrecord (номер записи). В таблице segmenttable=numberrecord;
-
-        if (c.moveToFirst()) {
-            // определяем номера столбцов по имени в выборке
-            int id = c.getColumnIndex("id");
-            int numberrecord = c.getColumnIndex("numberrecord");
-            int namerecord = c.getColumnIndex("namerecord");
-            int longitude = c.getColumnIndex("longitude");
-            int latitude = c.getColumnIndex("latitude");
-            int speed = c.getColumnIndex("speed");
-            int time = c.getColumnIndex("time");
-            long1 = Double.valueOf(c.getString(longitude)); //координаты самой первой точки
-            lat1 = Double.valueOf(c.getString(latitude));  //координаты самой первой точки
-
-            do {
-                 rectOptions.add(new LatLng(Double.valueOf(c.getString(latitude)),Double.valueOf(c.getString(longitude))));
-                // получаем значения по номерам столбцов и пишем все в лог
-                Log.d("LOG_TAG",
-                        "ID = " + c.getInt(id) +
-                                ", numberrecord = " + c.getString(numberrecord) +
-                                ", namerecord = " + c.getString(namerecord) +
-                                ", longitude = " + c.getString(longitude) +
-                                ", latitude = " + c.getString(latitude) +
-                                ", speed = " + c.getString(speed) +
-                                ", time = " + c.getString(time));
-
-                // переход на следующую строку
-                // а если следующей нет (текущая - последняя), то false - выходим из цикла
-                if (c.isLast()) {
-                    long2 = Double.valueOf(c.getString(longitude)); //координаты последней точки
-                    lat2 = Double.valueOf(c.getString(latitude));  //координаты последней точки
-                }
-            } while (c.moveToNext());
-        }
-        c.close();
-    return rectOptions;
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((lat1+lat2)/2, (long1+long2)/2), 8.5f), 5000, null); //приближение
     }
 }
+

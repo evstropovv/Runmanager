@@ -5,11 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.vasyaevstropov.runmanager.Models.Coordinates;
 
-public class DBOpenHelper extends SQLiteOpenHelper {
+import java.util.ArrayList;
 
+public class DBOpenHelper extends SQLiteOpenHelper {
+    Double long1, lat1, long2, lat2;
     public DBOpenHelper(Context context) {
         super(context, "DBcoordinates", null, 1);
     }
@@ -45,17 +50,18 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         long id =0;
 
         SQLiteDatabase db = getWritableDatabase();
-
+        try {
             ContentValues cv = new ContentValues();
             cv.put(Coordinates.COLUMN_NUMB_RECORD, String.valueOf(getLastNumberRecord(db)));
-            cv.put(Coordinates.COLUMN_NAME_RECORD,"");
+            cv.put(Coordinates.COLUMN_NAME_RECORD, "");
             cv.put(Coordinates.COLUMN_LONGITUDE, String.valueOf(coordinates.getLongitude()));
             cv.put(Coordinates.COLUMN_LATITUDE, String.valueOf(coordinates.getLatitude()));
             cv.put(Coordinates.COLUMN_SPEED, String.valueOf(coordinates.getSpeed()));
             cv.put(Coordinates.COLUMN_TIME, String.valueOf(coordinates.getTime()));
-
             id = db.insert(Coordinates.TABLE_NAME_SPEEDTABLE, null, cv);
-
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         return id;
     }
 
@@ -89,4 +95,52 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return lastNumberRecord;
     }
 
+    public PolylineOptions readDB(Integer numb) {
+        PolylineOptions rectOptions = new PolylineOptions();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(Coordinates.TABLE_NAME_SPEEDTABLE, null, Coordinates.COLUMN_NUMB_RECORD+"=" + numb, null, null, null, null); //делаем выборку элементов со значением numberrecord (номер записи). В таблице segmenttable=numberrecord;
+        if (c.moveToFirst()) {
+            int longitude = c.getColumnIndex(Coordinates.COLUMN_LONGITUDE);
+            int latitude = c.getColumnIndex(Coordinates.COLUMN_LATITUDE);
+            long1 = Double.valueOf(c.getString(longitude)); //координаты самой первой точки
+            lat1 = Double.valueOf(c.getString(latitude));  //координаты самой первой точки
+            do {
+                rectOptions.add(new LatLng(Double.valueOf(c.getString(latitude)), Double.valueOf(c.getString(longitude))));
+                if (c.isLast()) {
+                    long2 = Double.valueOf(c.getString(longitude)); //координаты последней точки
+                    lat2 = Double.valueOf(c.getString(latitude));  //координаты последней точки
+                }
+            } while (c.moveToNext());
+        }
+        c.close();
+        return rectOptions;
+    }
+
+    public ArrayList<Double> getFirstLastPoint(Integer numb){ //метод возвращяет координаты ПЕРВОЙ и ПОСЛЕДНЕЙ точки маршрута
+    ArrayList<Double> arr = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            Cursor c = db.query(Coordinates.TABLE_NAME_SPEEDTABLE, null, Coordinates.COLUMN_NUMB_RECORD + "=" + numb, null, null, null, null); //делаем выборку элементов со значением numberrecord (номер записи). В таблице segmenttable=numberrecord;
+
+            c.moveToFirst(); //первая точка
+
+            int longitude = c.getColumnIndex(Coordinates.COLUMN_LONGITUDE);
+            int latitude = c.getColumnIndex(Coordinates.COLUMN_LATITUDE);
+
+            long1 = Double.valueOf(c.getString(longitude)); //координаты самой первой точки
+            lat1 = Double.valueOf(c.getString(latitude));  //координаты самой первой точки
+            arr.add(long1);
+            arr.add(lat1);
+
+            c.moveToLast(); //последняя точка
+
+            long2 = Double.valueOf(c.getString(longitude)); //координаты последней точки
+            lat2 = Double.valueOf(c.getString(latitude));  //координаты последней точки
+            arr.add(long2);
+            arr.add(lat2);
+
+            c.close();
+        }catch (Exception e){};
+        return arr;
+    }
 }

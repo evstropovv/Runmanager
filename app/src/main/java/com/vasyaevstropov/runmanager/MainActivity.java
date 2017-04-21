@@ -36,7 +36,7 @@ import com.vasyaevstropov.runmanager.Services.GPSservice;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button btnStart, btnRead, btnDeleteDB, btnRecycler;
+    Button btnStart, btnDeleteDB, btnRecycler;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
     public static boolean startGpsService = false;
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (broadcastReceiver == null){
+        if (broadcastReceiver == null){ //Используется для связи с GPSservice;
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -56,14 +56,14 @@ public class MainActivity extends AppCompatActivity
                 }
             };
         }
-        registerReceiver (broadcastReceiver, new IntentFilter("location_update"));
+        registerReceiver (broadcastReceiver, new IntentFilter("location_update")); // Регистрация ресивера (для Сервиса)
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (broadcastReceiver !=null){
-            unregisterReceiver(broadcastReceiver);
+            unregisterReceiver(broadcastReceiver); //удаляем броадкаст
         }
 
     }
@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         btnStart = (Button)findViewById(R.id.btnStart);
-        btnRead = (Button)findViewById(R.id.btnRead);
         btnRecycler = (Button)findViewById(R.id.btnRecycler);
         btnRecycler.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        btnDeleteDB = (Button)findViewById(R.id.btnDeleteDB);
+
         tvCurrentLocation = (TextView)findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
@@ -134,89 +133,11 @@ public class MainActivity extends AppCompatActivity
                     startTimer(MainActivity.startGpsService=false);
 
                 }
-
-            }
-        });
-        btnRead.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext(), "BUTTON PRESSED",Toast.LENGTH_SHORT).show();
-                readDB();
-
-            }
-        });
-        btnDeleteDB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteDB();
             }
         });
     }
 
-    private void deleteDB() {
-        Toast.makeText(this, "deleteFromDB pressed",Toast.LENGTH_SHORT).show();
-        DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
-        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-        db.rawQuery("DELETE FROM speedtable", null);
-        db.close();
 
-    }
-
-
-    private void readDB() {
-        DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
-        SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
-        Cursor c = db.query("speedtable", null, null, null, null, null, null);
-
-        if (c.moveToFirst()) {
-            // определяем номера столбцов по имени в выборке
-            int id = c.getColumnIndex("id");
-            int numberrecord = c.getColumnIndex("numberrecord");
-            int namerecord = c.getColumnIndex("namerecord");
-            int longitude = c.getColumnIndex("longitude");
-            int latitude = c.getColumnIndex("latitude");
-            int speed = c.getColumnIndex("speed");
-            int time = c.getColumnIndex("time");
-            do {
-                // получаем значения по номерам столбцов и пишем все в лог
-                Log.d("LOG_TAG",
-                        "ID = " + c.getInt(id) +
-                                ", numberrecord = " + c.getString(numberrecord) +
-                                ", namerecord = " + c.getString(namerecord) +
-                                ", longitude = " + c.getString(longitude) +
-                                ", latitude = " + c.getString(latitude) +
-                                ", speed = " + c.getString(speed) +
-                                ", time = " + c.getString(time));
-
-                // переход на следующую строку
-                // а если следующей нет (текущая - последняя), то false - выходим из цикла
-            } while (c.moveToNext());
-
-        }
-
-        Cursor c2 = db.query("segmenttable", null, null, null, null, null, null);
-
-        if (c2.moveToFirst()) {
-            // определяем номера столбцов по имени в выборке
-            int id = c2.getColumnIndex("id");
-            int numberrecord = c2.getColumnIndex("numberrecord");
-            int dayofweek = c2.getColumnIndex("dayofweek");
-            int date = c2.getColumnIndex("date");
-            int distance = c2.getColumnIndex("distance");
-            do {
-                // получаем значения по номерам столбцов и пишем все в лог
-                Log.d("LOG_TAG",
-                        "ID = " + c2.getInt(id)  +
-                                ", dayofweek = " + c2.getString(dayofweek) +
-                                ", date = " + c2.getString(date) +
-                                ", distance = " + c2.getString(distance));
-                // переход на следующую строку
-                // а если следующей нет (текущая - последняя), то false - выходим из цикла
-            } while (c2.moveToNext());
-        }
-
-        db.close();
-    }
 
     private void startTimer(boolean b) {
         if (b) {
