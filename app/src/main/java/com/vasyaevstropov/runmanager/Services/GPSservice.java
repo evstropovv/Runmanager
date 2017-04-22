@@ -103,6 +103,7 @@ public class GPSservice extends Service {
 
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();

@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -27,6 +30,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.vasyaevstropov.runmanager.Activities.CardListActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
@@ -35,11 +45,15 @@ import com.vasyaevstropov.runmanager.Services.GPSservice;
 
 //Главное окно программы
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
-    Button btnStart,  btnRecycler;
+    Button btnStart, btnRecycler;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
+    SupportMapFragment mapFragment;
+    double lat1 = 0;
+    double long1 = 0;
+
     public static boolean startGpsService = false;
     private BroadcastReceiver broadcastReceiver;
     CountDownTimer timer;
@@ -48,23 +62,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (broadcastReceiver == null){ //Используется для связи с GPSservice;
+        if (broadcastReceiver == null) { //Используется для связи с GPSservice;
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
                     tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+
                 }
             };
         }
-        registerReceiver (broadcastReceiver, new IntentFilter("location_update")); // Регистрация ресивера (для Сервиса)
+        registerReceiver(broadcastReceiver, new IntentFilter("location_update")); // Регистрация ресивера (для Сервиса)
     }
 
     @Override
     protected void onDestroy() {
         Log.d("Log.d", "onDestroy");
         super.onDestroy();
-        if (broadcastReceiver !=null){
+        if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver); //удаляем броадкаст
         }
 
@@ -80,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Toast.makeText(this,getTheme().toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getTheme().toString(), Toast.LENGTH_SHORT).show();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -90,8 +105,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        btnStart = (Button)findViewById(R.id.btnStart);
-        btnRecycler = (Button)findViewById(R.id.btnRecycler);
+        btnStart = (Button) findViewById(R.id.btnStart);
+        btnRecycler = (Button) findViewById(R.id.btnRecycler);
         btnRecycler.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,9 +115,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        tvCurrentLocation = (TextView)findViewById(R.id.tvCoordinates);
+        tvCurrentLocation = (TextView) findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
+        mapFragment =
+                (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
 
 
         createTimer();
@@ -112,11 +130,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createTimer() {
-        timer = new CountDownTimer(1000000000, 1000){
+        timer = new CountDownTimer(1000000000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                long seconds = 1000000 - millisUntilFinished/1000;
-                tvTime.setText(""+ seconds);
+                long seconds = 1000000 - millisUntilFinished / 1000;
+                tvTime.setText("" + seconds);
             }
 
             @Override
@@ -126,6 +144,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void enableButtons() {
+        mapFragment.getMapAsync(this);
+
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,12 +153,12 @@ public class MainActivity extends AppCompatActivity
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     startService(intent);
                     btnStart.setText("STOP");
-                    startTimer(MainActivity.startGpsService=true);
-                }else {
+                    startTimer(MainActivity.startGpsService = true);
+                } else {
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     stopService(intent);
                     btnStart.setText("START");
-                    startTimer(MainActivity.startGpsService=false);
+                    startTimer(MainActivity.startGpsService = false);
 
                 }
             }
@@ -146,26 +166,25 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     private void startTimer(boolean b) {
         if (b) {
             timer.start();
-        }else {
+        } else {
             timer.cancel();
         }
 
     }
 
     private boolean runtimePermission() { //запрос у пользователя разрешений на GPS для андроид 6.0 +
-        if (Build.VERSION.SDK_INT >=23
+        if (Build.VERSION.SDK_INT >= 23
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.INTERNET,
-                    Manifest.permission.ACCESS_NETWORK_STATE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.INTERNET,
+                            Manifest.permission.ACCESS_NETWORK_STATE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     100);
             return true;
         }
@@ -175,14 +194,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { //перехват ответа на разрешения
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode==100){
-            if (grantResults[0]==PackageManager.PERMISSION_GRANTED &&
-                    grantResults[1]==PackageManager.PERMISSION_GRANTED &&
-                    grantResults[2]==PackageManager.PERMISSION_GRANTED&&
-                    grantResults[3]==PackageManager.PERMISSION_GRANTED&&
-                    grantResults[4]==PackageManager.PERMISSION_GRANTED){
+        if (requestCode == 100) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[3] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[4] == PackageManager.PERMISSION_GRANTED) {
                 enableButtons();
-            }else{ //показываем окно, пока не получим разрешения.
+            } else { //показываем окно, пока не получим разрешения.
                 runtimePermission();
             }
         }
@@ -249,5 +268,42 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        setMapStyle(googleMap);
+        getLastLocation();
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 14.5f), 10, null); //приближение
+
+    }
+
+    private void getLastLocation() {
+
+        LocationManager locationManager = (LocationManager) getSystemService
+                (Context.LOCATION_SERVICE);
+        Location getLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        try {
+            lat1 = getLastLocation.getLatitude();
+            long1 = getLastLocation.getLongitude();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        Toast.makeText(this, lat1 + " " + long1, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setMapStyle(GoogleMap googlemap) { //настраиваем отображение карты
+        try {
+            int mapResource = getResources().getIdentifier(Preferences.getMapName(), "raw", getPackageName());
+            boolean success = googlemap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, mapResource));
+            if (!success) {
+                Log.e("Log.e", "Style parsing failed");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("Log.e", "Can't find style of map", e);
+        }
+
     }
 }
