@@ -27,8 +27,7 @@ public class CardListActivity extends AppCompatActivity {
     ArrayList<String> dateList;
     ArrayList<String> distanceList;
     ArrayList<String> numberRecordList;
-
-
+    ArrayList<ArrayList<String>> listOfRuns;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class CardListActivity extends AppCompatActivity {
         distanceList = new ArrayList<>();
         numberRecordList = new ArrayList<>();
 
-        readDB(this);
+        setListOfRuns();
 
         recyclerView = (RecyclerView)findViewById(R.id.my_recycler_view);
         recyclerLayoutManager = new LinearLayoutManager(this);
@@ -50,28 +49,14 @@ public class CardListActivity extends AppCompatActivity {
 
     }
 
-    private void readDB(Context context) {
-        DBOpenHelper dbOpenHelper = new DBOpenHelper(context);
-        SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
+    private void setListOfRuns(){
 
-        Cursor c2 = db.query("segmenttable", null, null, null, null, null, null);
+        DBOpenHelper dbOpenHelper = new DBOpenHelper(this);
+        listOfRuns = dbOpenHelper.getListOfRuns();
 
-        if (c2.moveToFirst()) {
-            // определяем номера столбцов по имени в выборке
-            int id = c2.getColumnIndex("id");
-            int dayofweek = c2.getColumnIndex("dayofweek");
-            int date = c2.getColumnIndex("date");
-            int distance = c2.getColumnIndex("distance");
-            do {
-                numberRecordList.add(c2.getString(id));
-                dayOfWeekList.add(c2.getString(dayofweek));
-                dateList.add(c2.getString(date));
-                distanceList.add(c2.getString(distance));
-
-            } while (c2.moveToNext());
-            c2.close();
-        }
-        db.close();
+        dayOfWeekList = listOfRuns.get(0);
+        dateList = listOfRuns.get(1);
+        distanceList = listOfRuns.get(2);
+        numberRecordList = listOfRuns.get(3);
     }
-
 }
