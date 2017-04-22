@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.R;
-import com.vasyaevstropov.runmanager.Activities.RunListActivity;
+import com.vasyaevstropov.runmanager.Activities.MapActivity;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -58,7 +58,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), RunListActivity.class);
+                Intent intent = new Intent(v.getContext(), MapActivity.class);
                 intent.putExtra("number", vh.getAdapterPosition()+1);
                 v.getContext().startActivity(intent);
             }

@@ -147,40 +147,44 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return arr;
     }
 
-    public ArrayList<ArrayList<String>> getListOfRuns() {
+    public ArrayList<ArrayList<String>> getListOfRuns() { //Вытягиваем с базы список пробежек.
 
-        SQLiteDatabase db = getReadableDatabase();
+            SQLiteDatabase db = getReadableDatabase();
 
-        ArrayList<String> dayOfWeekList = new ArrayList<>();
-        ArrayList<String> dateList = new ArrayList<>();
-        ArrayList<String> distanceList = new ArrayList<>();
-        ArrayList<String> numberRecordList = new ArrayList<>();
-        ArrayList<ArrayList<String>> listOfRuns = new ArrayList<>();
+            ArrayList<String> dayOfWeekList = new ArrayList<>();
+            ArrayList<String> dateList = new ArrayList<>();
+            ArrayList<String> distanceList = new ArrayList<>();
+            ArrayList<String> numberRecordList = new ArrayList<>();
+            ArrayList<ArrayList<String>> listOfRuns = new ArrayList<>();
 
+            try {
+                Cursor c2 = db.query(Coordinates.TABLE_NAME_SEGMENT, null, null, null, null, null, null);
+                if (c2.moveToFirst()) {
+                    // определяем номера столбцов по имени в выборке
+                    int id = c2.getColumnIndex(Coordinates.COLUMN_ID);
+                    int dayofweek = c2.getColumnIndex(Coordinates.COLUMN_DAYOFWEEK);
+                    int date = c2.getColumnIndex(Coordinates.COLUMN_DATE);
+                    int distance = c2.getColumnIndex(Coordinates.COLUMN_DISTANCE);
+                    do {
+                        numberRecordList.add(c2.getString(id));
+                        dayOfWeekList.add(c2.getString(dayofweek));
+                        dateList.add(c2.getString(date));
+                        distanceList.add(c2.getString(distance));
 
-            Cursor c2 = db.query(Coordinates.TABLE_NAME_SEGMENT, null, null, null, null, null, null);
-            if (c2.moveToFirst()) {
-                // определяем номера столбцов по имени в выборке
-                int id = c2.getColumnIndex(Coordinates.COLUMN_ID);
-                int dayofweek = c2.getColumnIndex(Coordinates.COLUMN_DAYOFWEEK);
-                int date = c2.getColumnIndex(Coordinates.COLUMN_DATE);
-                int distance = c2.getColumnIndex(Coordinates.COLUMN_DISTANCE);
-                do {
-                    numberRecordList.add(c2.getString(id));
-                    dayOfWeekList.add(c2.getString(dayofweek));
-                    dateList.add(c2.getString(date));
-                    distanceList.add(c2.getString(distance));
+                    } while (c2.moveToNext());
+                    c2.close();
+                }
 
-                } while (c2.moveToNext());
-                c2.close();
-            }
+            db.close();
 
-        db.close();
+            listOfRuns.add(dayOfWeekList);
+            listOfRuns.add(dateList);
+            listOfRuns.add(distanceList);
+            listOfRuns.add(numberRecordList);
 
-        listOfRuns.add(dayOfWeekList);
-        listOfRuns.add(dateList);
-        listOfRuns.add(distanceList);
-        listOfRuns.add(numberRecordList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return listOfRuns;
     }

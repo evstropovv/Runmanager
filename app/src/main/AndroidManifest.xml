@@ -37,7 +37,7 @@
         <activity
             android:name=".Activities.SettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activities.RunListActivity" />
+        <activity android:name=".Activities.MapActivity" />
 
         <service android:name=".Services.GPSservice" />
 

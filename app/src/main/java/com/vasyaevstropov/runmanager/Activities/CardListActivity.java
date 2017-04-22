@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import com.vasyaevstropov.runmanager.Adapters.RecyclerAdapter;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.R;
 
 import java.util.ArrayList;
@@ -31,8 +33,14 @@ public class CardListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Preferences.init(this);
+        setTheme(Preferences.getStyle());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         dayOfWeekList = new ArrayList<>();
         dateList = new ArrayList<>();

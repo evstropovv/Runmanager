@@ -17,4 +17,28 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+     <style name="AppTheme.Dark" parent="AppTheme.NoActionBar">
+            <item name="colorPrimary">#434242</item>
+            <item name="colorPrimaryDark">#000000</item>
+            <item name="colorAccent">#FF8A65</item>
+     </style>
+
+    <style name="AppTheme.Night" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">#3F51B5</item>
+        <item name="colorPrimaryDark">#283593</item>
+        <item name="colorAccent">#FF4081</item>
+    </style>
+
+    <style name="AppTheme.Blue" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorPrimaryDark">#1565C0</item>
+        <item name="colorAccent">#FF4081</item>
+    </style>
+
+    <style name="AppTheme.Silver" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">#9E9E9E</item>
+        <item name="colorPrimaryDark">#424242</item>
+        <item name="colorAccent">#FF4081</item>
+    </style>
 </resources>

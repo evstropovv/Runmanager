@@ -30,13 +30,14 @@ import android.widget.Toast;
 import com.vasyaevstropov.runmanager.Activities.CardListActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Services.GPSservice;
 
 //Главное окно программы
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    Button btnStart, btnDeleteDB, btnRecycler;
+    Button btnStart,  btnRecycler;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
     public static boolean startGpsService = false;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        Log.d("Log.d", "onDestroy");
         super.onDestroy();
         if (broadcastReceiver !=null){
             unregisterReceiver(broadcastReceiver); //удаляем броадкаст
@@ -70,11 +72,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("Log.d", "onCreate");
+        Preferences.init(this);
+        setTheme(Preferences.getStyle());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Toast.makeText(this,getTheme().toString(), Toast.LENGTH_SHORT).show();
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -207,8 +215,8 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent settingIntent = new Intent(this, SettingActivity.class);
-            startActivityForResult(settingIntent,150);
-
+            startActivity(settingIntent);
+            finish();
             return true;
         }
 
@@ -225,7 +233,8 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
             Intent settingIntent = new Intent(this, SettingActivity.class);
-            startActivityForResult(settingIntent,150);
+            startActivity(settingIntent);
+            finish();
 
         } else if (id == R.id.nav_slideshow) {
 
