@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         tvTime = (TextView) findViewById(R.id.tvTime);
         mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.map);
+                        .findFragmentById(R.id.map_main);
 
 
         createTimer();

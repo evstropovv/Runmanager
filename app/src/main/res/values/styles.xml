@@ -25,8 +25,8 @@
      </style>
 
     <style name="AppTheme.Night" parent="AppTheme.NoActionBar">
-        <item name="colorPrimary">#3F51B5</item>
-        <item name="colorPrimaryDark">#283593</item>
+        <item name="colorPrimary">#2E7D32</item>
+        <item name="colorPrimaryDark">#1B5E20</item>
         <item name="colorAccent">#FF4081</item>
     </style>
 

@@ -33,11 +33,13 @@ public class GPSservice extends Service {
     private double lastX = 0, lastY = 0;
     int lastNumberRecord =0;
 
-    SQLiteDatabase db;
-    Calendar calendar;
-    int dayOfWeek;
-    String date;
-    double sumdistance = 0;
+    private SQLiteDatabase db;
+    private Calendar calendar;
+    private int dayOfWeek;
+    private String date;
+    private double sumdistance = 0;
+
+    private long time = 0 ; // in milliseconds - 3000 6000 9000 etc.
 
     @Nullable
     @Override
@@ -59,7 +61,7 @@ public class GPSservice extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 double speed = 0;
-                Intent i = new Intent("location_update");
+                                Intent i = new Intent("location_update");
                 if ((lastX==0)&&(lastY==0)) {
                     lastX = location.getLongitude();
                     lastY = location.getLatitude();
@@ -76,7 +78,8 @@ public class GPSservice extends Service {
                 sendBroadcast(i);
 
                 //Записываем в базу координаты...
-                long m = dbOpenHelper.insertStudent(new Coordinates(String.valueOf(lastNumberRecord), "", String.valueOf(lastX), String.valueOf(lastY), String.valueOf(speed), "12"));
+                long m = dbOpenHelper.insertCoordinates(new Coordinates(String.valueOf(lastNumberRecord), "", String.valueOf(lastX), String.valueOf(lastY), String.valueOf(speed), String.valueOf(time)));
+                time = time + 3000; //Обновление каждые 3 секунды
                 Toast.makeText(getBaseContext(), m+"", Toast.LENGTH_SHORT).show();
             }
 

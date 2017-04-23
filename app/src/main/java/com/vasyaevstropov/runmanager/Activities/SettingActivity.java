@@ -19,8 +19,7 @@ public class SettingActivity extends AppCompatActivity {
     Spinner spinner;
     MySpinnerAdapter adapter;
 
-    Button btnSave;
-    private String[] styles = {"Голубой", "Темный", "Ночной", "Серебрянный"};
+    private String[] styles = {"Голубой", "Темный", "Зеленый", "Серебрянный"};
     private String[] mapNames = {"map_blue", "map_dark", "map_night", "map_silver"};
     private Integer[] styleNames = {R.style.AppTheme_Blue,R.style.AppTheme_Dark,R.style.AppTheme_Night,R.style.AppTheme_Silver};
     private Integer[] stylesColors = {R.color.blue, R.color.dark, R.color.night, R.color.silver};
@@ -45,7 +44,6 @@ public class SettingActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Preferences.init(view.getContext());
                 Preferences.setStyle(stylesColors[position], styles[position], mapNames[position], position, styleNames[position]);
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

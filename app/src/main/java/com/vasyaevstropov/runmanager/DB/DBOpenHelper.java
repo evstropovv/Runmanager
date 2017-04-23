@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.vasyaevstropov.runmanager.Models.Coordinates;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
     private Double long1, lat1, long2, lat2;
@@ -48,7 +49,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long insertStudent(Coordinates coordinates) {
+    public long insertCoordinates(Coordinates coordinates) {
         long id = 0;
 
         SQLiteDatabase db = getWritableDatabase();
@@ -117,6 +118,27 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return rectOptions;
     }
 
+    public ArrayList<HashMap<String, String>> getTimeSpeed(Integer numb) {
+        HashMap<String, String> map; //Время, Скорость
+        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(Coordinates.TABLE_NAME_SPEEDTABLE, null, Coordinates.COLUMN_NUMB_RECORD + "=" + numb, null, null, null, null); //делаем выборку элементов со значением numberrecord (номер записи). В таблице segmenttable=numberrecord;
+
+        if (c.moveToFirst()) {
+            int timeColumn = c.getColumnIndex(Coordinates.COLUMN_TIME);
+            int speedColumn = c.getColumnIndex(Coordinates.COLUMN_SPEED);
+            do {
+                map = new HashMap<>();
+                map.put("speed", String.valueOf(c.getString(speedColumn)));
+                map.put("time", String.valueOf(c.getString(timeColumn)));
+                arrayList.add(map);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return arrayList;
+    }
+
+
     public ArrayList<Double> getFirstLastPoint(Integer numb) { //метод возвращяет координаты ПЕРВОЙ и ПОСЛЕДНЕЙ точки маршрута
         ArrayList<Double> arr = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
@@ -143,7 +165,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             c.close();
         } catch (Exception e) {
         }
-        ;
         return arr;
     }
 

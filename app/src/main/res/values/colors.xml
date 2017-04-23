@@ -4,11 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    {"Голубой","Темный", "Ночной","Серебрянный"};
 
-    <color name="blue">#a8000d93</color>
-    <color name="dark">#494949</color>
-    <color name="night">#6b3802</color>
-    <color name="silver">#c2bfc0</color>
+
+
+    <color name="blue">#2196F3</color>
+    <color name="dark">#434242</color>
+    <color name="night">#2E7D32</color>
+    <color name="silver">#9E9E9E</color>
 
 </resources>
