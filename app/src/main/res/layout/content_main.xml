@@ -10,27 +10,49 @@
     tools:context="com.vasyaevstropov.runmanager.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <fragment
-        android:id="@+id/map_main"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        map:uiCompass="true"
-        map:mapType="normal"
-        map:uiRotateGestures="false"
-        map:uiScrollGestures="false"
-        map:uiTiltGestures="false"
-        map:uiZoomControls="false"
-        map:uiZoomGestures="true"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/map_main"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            map:mapType="normal"
+            map:uiCompass="true"
+            map:uiRotateGestures="false"
+            map:uiScrollGestures="false"
+            map:uiTiltGestures="false"
+            map:uiZoomControls="false"
+            map:uiZoomGestures="true" />
+
+        <FrameLayout
+            android:id="@+id/musicFrame"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+        </FrameLayout>
+
+    </LinearLayout>
 
     <Button
-        android:text="START"
+        android:id="@+id/btnStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnStart"
-        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:text="START"
+        android:textSize="20sp" />
 
     <TextView
         android:text="0 km/h"
@@ -67,6 +89,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="RECYCLER"
+        android:layout_marginBottom="76dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignLeft="@+id/tvCoordinates"
+        android:layout_alignStart="@+id/tvCoordinates" />
+
 </RelativeLayout>

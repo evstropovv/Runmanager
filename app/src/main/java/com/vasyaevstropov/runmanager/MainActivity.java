@@ -1,6 +1,7 @@
 package com.vasyaevstropov.runmanager;
 
 import android.Manifest;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +43,7 @@ import com.vasyaevstropov.runmanager.Activities.CardListActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.Fragments.MusicFragment;
 import com.vasyaevstropov.runmanager.Services.GPSservice;
 
 //Главное окно программы
@@ -57,6 +60,9 @@ public class MainActivity extends AppCompatActivity
     public static boolean startGpsService = false;
     private BroadcastReceiver broadcastReceiver;
     CountDownTimer timer;
+
+    MusicFragment musicFragment;
+    android.app.FragmentTransaction fragmTrans;
 
 
     @Override
@@ -163,6 +169,14 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
+
+        musicFragment = new MusicFragment();  //активируем фрагмент с музыкой.
+        fragmTrans = getFragmentManager().beginTransaction();
+  
+        fragmTrans.add(R.id.musicFrame, musicFragment);
+        fragmTrans.commit();
+
     }
 
 
@@ -195,7 +209,7 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { //перехват ответа на разрешения
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+            if (    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[1] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[2] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[3] == PackageManager.PERMISSION_GRANTED &&

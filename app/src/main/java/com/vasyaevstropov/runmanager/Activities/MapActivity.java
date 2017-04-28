@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -42,6 +44,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private DBOpenHelper dbOpenHelper;
     private LineChart lineChart;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Preferences.init(this);
@@ -70,19 +73,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         ArrayList<HashMap<String, String>> arrayList = dbOpenHelper.getTimeSpeed(number);
         List<Entry> entries = new ArrayList<>();
-        String stringtest=" TIME + SPEED :";
-
-        for (int i = 0; i < arrayList.size() ; i++) {
+                for (int i = 0; i < arrayList.size() ; i++) {
             HashMap<String, String> map = arrayList.get(i);
 
             float speed = Float.parseFloat(map.get("speed"));
             float time = Float.parseFloat(map.get("time"))/1000;
 
             entries.add(new Entry( time , speed));
-            stringtest = speed + " * " + time+"";
         }
-
-        Toast.makeText(this, stringtest + "", Toast.LENGTH_SHORT).show();
 
         LineDataSet lineData1 = new LineDataSet(entries, "(NAME)LineData1");
         lineData1.setColor(R.color.blue);
