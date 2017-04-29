@@ -40,6 +40,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.vasyaevstropov.runmanager.Activities.CardListActivity;
+import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.DB.Preferences;
@@ -68,13 +69,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+
         if (broadcastReceiver == null) { //Используется для связи с GPSservice;
+
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
+                    btnStart.setText("STOP");
                     tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
                     tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
-
                 }
             };
         }
@@ -173,7 +177,7 @@ public class MainActivity extends AppCompatActivity
 
         musicFragment = new MusicFragment();  //активируем фрагмент с музыкой.
         fragmTrans = getFragmentManager().beginTransaction();
-  
+
         fragmTrans.add(R.id.musicFrame, musicFragment);
         fragmTrans.commit();
 
@@ -198,7 +202,8 @@ public class MainActivity extends AppCompatActivity
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.INTERNET,
                             Manifest.permission.ACCESS_NETWORK_STATE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE},
                     100);
             return true;
         }
@@ -213,7 +218,8 @@ public class MainActivity extends AppCompatActivity
                     grantResults[1] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[2] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[3] == PackageManager.PERMISSION_GRANTED &&
-                    grantResults[4] == PackageManager.PERMISSION_GRANTED) {
+                    grantResults[4] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[5] == PackageManager.PERMISSION_GRANTED) {
                 enableButtons();
             } else { //показываем окно, пока не получим разрешения.
                 runtimePermission();
@@ -276,7 +282,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            Intent mediaPlayerIntent = new Intent(this, MediaPlayerActivity.class);
+            startActivity(mediaPlayerIntent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
