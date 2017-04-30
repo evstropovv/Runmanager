@@ -1,10 +1,12 @@
 package com.vasyaevstropov.runmanager.Activities;
 
+import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
+import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.Fragments.MusicFragment;
 import com.vasyaevstropov.runmanager.Models.Coordinates;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
@@ -25,8 +29,11 @@ public class MediaPlayerActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     ArrayList<MediaContent> arrayMediaContent;
     ArrayList<String> arraySongNames;
-
     ListView musicListView;
+
+    android.app.FragmentTransaction fm;
+    MusicFragment musicFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +57,26 @@ public class MediaPlayerActivity extends AppCompatActivity {
                 Intent intent = new Intent(view.getContext(), MusicService.class);
                 intent.putExtra(MediaContent.currentSong, arrayMediaContent.get(position));
                 startService(intent);
+
+                Preferences.init(view.getContext());
+                Preferences.setLastMusic(position);
+
             }
         });
+
+        fillMusicFragment();
+
+    }
+
+    private void fillMusicFragment() {
+        musicFragment = new MusicFragment();  //активируем фрагмент с музыкой.
+        fm = getFragmentManager().beginTransaction();
+        fm.add(R.id.musicFrame, musicFragment);
+        fm.commit();
     }
 
     private void fillArrayMedaContent(){
+
         MusicStorage storage = new MusicStorage(this);
         arrayMediaContent = storage.getMusicList();
         fillArraySongName();

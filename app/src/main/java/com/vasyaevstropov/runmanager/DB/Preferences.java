@@ -74,5 +74,22 @@ public class Preferences { //Класс для сохранения настро
         }
         return preferences.getInt("styleName", R.color.dark);
     }
+
+
+
+    public static void setLastMusic(int musicPosition){
+        if (preferences == null) {
+            init();
+        }
+        editor.putInt("musicPosition", musicPosition);
+        editor.commit();
+    }
+
+    public static Integer getLastMusic(){
+        if (preferences ==null){
+            init();
+        }
+        return preferences.getInt("musicPosition", 0);
+    }
 }
 

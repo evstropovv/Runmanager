@@ -15,6 +15,8 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 
 import android.support.v4.content.ContextCompat;
@@ -327,4 +329,6 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
+
+
 }
