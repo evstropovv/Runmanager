@@ -24,6 +24,8 @@
 
         <ImageButton
             android:id="@+id/imgBtnPrevious"
+            android:background="@color/blue"
+            android:contentDescription="@string/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -31,6 +33,8 @@
 
         <ImageButton
             android:id="@+id/imgBtnPlay"
+            android:contentDescription="@string/app_name"
+            android:background="@color/blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -38,6 +42,8 @@
 
         <ImageButton
             android:id="@+id/imgBtnNext"
+            android:contentDescription="@string/app_name"
+            android:background="@color/blue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

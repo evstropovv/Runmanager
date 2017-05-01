@@ -41,9 +41,7 @@ public class MusicService extends Service {
         }else {
             playMedia(uri);
         }
-
     }
-
 
     private void playMedia(Uri uri) {
 
