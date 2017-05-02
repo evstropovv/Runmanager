@@ -327,8 +327,5 @@ public class MainActivity extends AppCompatActivity
         } catch (Resources.NotFoundException e) {
             Log.e("Log.e", "Can't find style of map", e);
         }
-
     }
-
-
 }

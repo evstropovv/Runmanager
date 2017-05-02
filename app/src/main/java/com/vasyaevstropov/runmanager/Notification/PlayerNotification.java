@@ -60,7 +60,5 @@ public class PlayerNotification extends Notification {
         intentNext.putExtra("DO", "next");
         PendingIntent pendNext = PendingIntent.getService(ctx, 2, intentNext, 0);
         contentView.setOnClickPendingIntent(R.id.imgBtnPrevious, pendNext);
-
-
     }
 }
