@@ -5,6 +5,7 @@
     <permission
         android:name="com.vasyaevstropov.runmanager.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <uses-permission android:name="com.vasyaevstropov.runmanager.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
