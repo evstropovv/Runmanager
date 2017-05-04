@@ -41,9 +41,15 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activities.MapActivity" />
 
-        <service android:name=".Services.GPSservice" />
-        <service android:name=".Services.MusicService" />
+        <service android:name=".Services.GPSservice" > </service>
 
+        <service android:name=".Services.MusicService">
+            <intent-filter>
+                <action android:name="com.vasyaevstropov.runmanager.TOGGLE_PLAYBACK"/>
+                <action android:name="com.vasyaevstropov.runmanager.PREV"/>
+                <action android:name="com.vasyaevstropov.runmanager.NEXT"/>
+            </intent-filter>
+        </service>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCWO9bAxj87GA5FPQAiPlcfYDrD2jm2Tpk" />

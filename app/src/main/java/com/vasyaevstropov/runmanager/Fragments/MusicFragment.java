@@ -8,18 +8,15 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
-import com.vasyaevstropov.runmanager.Notification.PlayerNotification;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Services.MusicService;
 
@@ -32,16 +29,18 @@ public class MusicFragment extends Fragment {
 
     private boolean paused = false, playbackPaused = false;
     MusicService musicService;
-    Intent playIntent;
-    Button btnPlay;
+    Button btnPlayStop, btnPrev, btnNext;
+
     private ArrayList<MediaContent> arrayMediaContent;
+
     ServiceConnection musicConnection;
 
     @Override
     public void onAttach(Context context) {
-        Log.d("VasyaLog", getClass().getName() + " onAttach");
-        super.onAttach(context);
 
+        Log.d("VasyaLog", getClass().getName() + " onAttach");
+
+        super.onAttach(context);
 
     }
 
@@ -53,59 +52,59 @@ public class MusicFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_music, container, false);
 
-        view.findViewById(R.id.btnPlayStop).setOnClickListener(new View.OnClickListener() {
+        btnPlayStop = (Button) view.findViewById(R.id.btnPlayStop);
+        btnPrev = (Button)view.findViewById(R.id.btnSongMinus);
+        btnNext = (Button)view.findViewById(R.id.btnSongPlus);
+
+        btnPlayStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MusicStorage storage = new MusicStorage(v.getContext());
-                arrayMediaContent = storage.getMusicList();
 
-                //  musicBinder.playTestMusic();
-                Toast.makeText(v.getContext(), "TOAST ", Toast.LENGTH_SHORT).show();
+                Preferences.init(getActivity().getApplicationContext());
 
-                if (musicConnection == null) {
-                    musicConnection = new ServiceConnection() {
+                Intent playIntent = new Intent(MusicService.PLAYMEDIA);
+                playIntent.setPackage(v.getContext().getPackageName());
 
-                        @Override
-                        public void onServiceConnected(ComponentName name, IBinder service) {
+                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
 
-                            Log.d("VasyaLog", getClass().getName() + " onServiceConnected");
+                v.getContext().startService(playIntent);
 
-                            musicService = ((MusicService.MusicBinder) service).getMusicService();
+            }
+        });
+        btnPrev.setOnClickListener(new View.OnClickListener() {
 
-                            Preferences.init(getActivity().getApplicationContext());
+            @Override
+            public void onClick(View v) {
 
-                            musicService.playTestMusic(Uri.parse(arrayMediaContent.get(Preferences.getLastMusic()).getUri()));
+                Preferences.init(getActivity().getApplicationContext());
 
-                            musicBound = true;
+                Intent playIntent = new Intent(MusicService.PREVMEDIA);
 
-                        }
+                playIntent.setPackage(v.getContext().getPackageName());
 
-                        @Override
-                        public void onServiceDisconnected(ComponentName name) {
+                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
 
-                            Log.d("VasyaLog", getClass().getName() + " onServiceDisconnected");
-
-                            musicBound = false;
-                        }
-                    };
-
-                    playIntent = new Intent(getActivity(), MusicService.class);
-
-                    playIntent.putExtra(MediaContent.currentSong, arrayMediaContent.get(0));
-
-                    getActivity().bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-
-                } else {
-
-                    musicService.playTestMusic(Uri.parse(arrayMediaContent.get(Preferences.getLastMusic()).getUri()));
-
-                }
-
-                new PlayerNotification(v.getContext());
+                v.getContext().startService(playIntent);
 
             }
         });
 
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Preferences.init(getActivity().getApplicationContext());
+
+                Intent playIntent = new Intent(MusicService.NEXTMEDIA);
+
+                playIntent.setPackage(v.getContext().getPackageName());
+
+                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
+
+                v.getContext().startService(playIntent);
+
+            }
+        });
 
         return view;
     }

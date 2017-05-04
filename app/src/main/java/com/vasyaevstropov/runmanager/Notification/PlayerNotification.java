@@ -12,11 +12,14 @@ import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
+import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.MainActivity;
+import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Services.MusicService;
 
@@ -34,10 +37,12 @@ public class PlayerNotification extends Notification {
 
     private Context ctx;
     private NotificationManager notificationManager;
+    private MediaContent mediaContent;
 
-    public PlayerNotification(Context context) {
+    public PlayerNotification(Context context, MediaContent mediaContent) {
         super();
         ctx = context;
+        this.mediaContent = mediaContent;
 
 
         if ( Build.VERSION.SDK_INT >= 21 ) {
@@ -48,9 +53,6 @@ public class PlayerNotification extends Notification {
             buldNotify15(ctx);
         }
 
-
-
-
     }
 
     private void buldNotify15(Context ctx) {
@@ -59,9 +61,8 @@ public class PlayerNotification extends Notification {
         builder.setSmallIcon(android.R.drawable.ic_media_play)
                 .setContentTitle("Track title")
                 .setContentText("Artist - album")
-
+                .setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(), R.drawable.side_nav_bar))
                 .build();
-
 
         Notification notification = builder.getNotification();
         notification.when = System.currentTimeMillis();
@@ -80,9 +81,9 @@ public class PlayerNotification extends Notification {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void buildNotify21(Context context) {
         final Bitmap artwork = BitmapFactory.decodeResource(context.getResources(), R.drawable.common_google_signin_btn_icon_dark);
-
 
         // Create a new MediaSession
         final MediaSession mediaSession = new MediaSession(context, "debug tag");
@@ -90,17 +91,26 @@ public class PlayerNotification extends Notification {
 
         mediaSession.setMetadata(new MediaMetadata.Builder()
                 .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, artwork)
-                .putString(MediaMetadata.METADATA_KEY_ARTIST, "Pink Floyd")
-                .putString(MediaMetadata.METADATA_KEY_ALBUM, "Dark Side of the Moon")
-                .putString(MediaMetadata.METADATA_KEY_TITLE, "The Great Gig in the Sky")
+                .putString(MediaMetadata.METADATA_KEY_ARTIST, mediaContent.getArtist())
+                .putString(MediaMetadata.METADATA_KEY_ALBUM, " ")
+                .putString(MediaMetadata.METADATA_KEY_TITLE, mediaContent.getTitle())
                 .build());
         // Indicate you're ready to receive media commands
         mediaSession.setActive(true);
         // Attach a new Callback to receive MediaSession updates
         mediaSession.setCallback(new MediaSession.Callback() {
+            public void onPause() {
+                super.onPause();
 
-            // Implement your callbacks
+            }
 
+            public void onPlay() {
+                super.onPlay();
+            }
+
+            public void onStop() {
+                super.onStop();
+            }
         });
         // Indicate you want to receive transport controls via your Callback
         mediaSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
@@ -112,30 +122,29 @@ public class PlayerNotification extends Notification {
                 // Set the Notification style
                 .setStyle(new Notification.MediaStyle()
                         // Attach our MediaSession token
-                        .setMediaSession(mediaSession.getSessionToken())
-                        // Show our playback controls in the compat view
-                        .setShowActionsInCompactView(0, 1, 2))
+                .setMediaSession(mediaSession.getSessionToken())
+                // Show our playback controls in the compat view
+                .setShowActionsInCompactView(1,2)) //0 - prev, 1 - play, 2 - next
                 // Set the Notification color
-                .setColor(0xFFDB4437)
+                .setColor(ctx.getResources().getColor(R.color.colorAccent))
                 // Set the large and small icons
                 .setLargeIcon(artwork)
                 .setSmallIcon(android.R.drawable.ic_media_play)
                 // Set Notification content information
-                .setContentText("Pink Floyd")
-                .setContentInfo("Dark Side of the Moon")
-                .setContentTitle("The Great Gig in the Sky")
+                .setContentText(mediaContent.getArtist())
+                .setContentInfo("")
+                .setContentTitle(mediaContent.getTitle())
                 // Add some playback controls
-//                .addAction(android.R.drawable.ic_media_previous, "prev", retreivePlaybackAction(3, ctx))
-//                .addAction(android.R.drawable.ic_media_pause, "pause", retreivePlaybackAction(1, ctx))
-//                .addAction(android.R.drawable.ic_media_next, "next", retreivePlaybackAction(2, ctx))
+                .addAction(android.R.drawable.ic_media_previous, "prev", retreivePlaybackAction(3, ctx))
+                .addAction(android.R.drawable.ic_media_pause, "pause", retreivePlaybackAction(1, ctx))
+                .addAction(android.R.drawable.ic_media_next, "next", retreivePlaybackAction(2, ctx))
                 .build();
 
         // Do something with your TransportControls
+
         final MediaController.TransportControls controls = mediaSession.getController().getTransportControls();
 
         ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE)).notify(1, noti);
-
-
     }
 
     private PendingIntent retreivePlaybackAction(int which, Context context) {
