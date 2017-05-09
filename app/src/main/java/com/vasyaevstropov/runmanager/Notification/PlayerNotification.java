@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
 import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.Fragments.MusicFragment;
 import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
@@ -25,9 +26,6 @@ import com.vasyaevstropov.runmanager.Services.MusicService;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-/**
- * Created by Вася on 01.05.2017.
- */
 
 public class PlayerNotification extends Notification {
 
@@ -67,17 +65,27 @@ public class PlayerNotification extends Notification {
         Notification notification = builder.getNotification();
         notification.when = System.currentTimeMillis();
 
+        RemoteViews contentView = new RemoteViews(ctx.getPackageName(), R.layout.notification_player); // Создаем экземпляр RemoteViews указывая использовать разметку нашего уведомления
 
+        contentView.setImageViewResource(R.id.imgBtnNext, android.R.drawable.ic_media_next);
+        contentView.setImageViewResource(R.id.imgBtnPlay, android.R.drawable.ic_media_play);
+        contentView.setImageViewResource(R.id.imgBtnPrevious, android.R.drawable.ic_media_previous);
 
-      //  setListeners(contentView);
-        notification.contentView = contentView;
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        contentView.setOnClickPendingIntent(R.id.imgBtnPlay, retreivePlaybackAction(1, ctx)); // для обработки нажатия
+        contentView.setOnClickPendingIntent(R.id.imgBtnNext, retreivePlaybackAction(2, ctx));
+        contentView.setOnClickPendingIntent(R.id.imgBtnPrevious, retreivePlaybackAction(3, ctx));
+        contentView.setOnClickPendingIntent(R.id.layoutMediaPlayer, retreivePlaybackAction(4, ctx));
+
+        //  setListeners(contentView);
+        notification.contentView = contentView; // Присваиваем contentView нашему уведомлению
+        notification.flags |= Notification.FLAG_ONGOING_EVENT; // не убираем уведомление
 
         CharSequence tickerText = "Ticker Text";
         notification.tickerText = tickerText;
         notification.icon = R.drawable.ic_menu_send;
 
-           notificationManager.notify(548853, notification);
+        notificationManager.notify(548853, notification);
+
 
     }
 
@@ -169,6 +177,11 @@ public class PlayerNotification extends Notification {
                 action = new Intent(ACTION_PREV);
                 action.setComponent(serviceName);
                 pendingIntent = PendingIntent.getService(context, 3, action, 0);
+                return pendingIntent;
+            case 4:
+                action = new Intent(ctx, MusicFragment.class);
+
+                pendingIntent = PendingIntent.getActivity(context, 4, action, PendingIntent.FLAG_UPDATE_CURRENT);
                 return pendingIntent;
             default:
                 break;
