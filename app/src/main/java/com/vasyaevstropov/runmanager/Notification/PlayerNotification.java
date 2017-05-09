@@ -33,6 +33,7 @@ public class PlayerNotification extends Notification {
     private static final String ACTION_PREV = "com.vasyaevstropov.runmanager.PREV";
     private static final String ACTION_NEXT = "com.vasyaevstropov.runmanager.NEXT";
 
+    RemoteViews contentView;
     private Context ctx;
     private NotificationManager notificationManager;
     private MediaContent mediaContent;
@@ -65,7 +66,7 @@ public class PlayerNotification extends Notification {
         Notification notification = builder.getNotification();
         notification.when = System.currentTimeMillis();
 
-        RemoteViews contentView = new RemoteViews(ctx.getPackageName(), R.layout.notification_player); // Создаем экземпляр RemoteViews указывая использовать разметку нашего уведомления
+        contentView = new RemoteViews(ctx.getPackageName(), R.layout.notification_player); // Создаем экземпляр RemoteViews указывая использовать разметку нашего уведомления
 
         contentView.setImageViewResource(R.id.imgBtnNext, android.R.drawable.ic_media_next);
         contentView.setImageViewResource(R.id.imgBtnPlay, android.R.drawable.ic_media_play);
@@ -109,7 +110,6 @@ public class PlayerNotification extends Notification {
         mediaSession.setCallback(new MediaSession.Callback() {
             public void onPause() {
                 super.onPause();
-
             }
 
             public void onPlay() {
@@ -179,8 +179,8 @@ public class PlayerNotification extends Notification {
                 pendingIntent = PendingIntent.getService(context, 3, action, 0);
                 return pendingIntent;
             case 4:
-                action = new Intent(ctx, MusicFragment.class);
-
+                action = new Intent(ctx, MediaPlayerActivity.class);
+                action.putExtra("Music", true);
                 pendingIntent = PendingIntent.getActivity(context, 4, action, PendingIntent.FLAG_UPDATE_CURRENT);
                 return pendingIntent;
             default:
@@ -189,21 +189,4 @@ public class PlayerNotification extends Notification {
         return null;
     }
 
-
-    private void setListeners(RemoteViews contentView) {
-        Intent intentPrevious = new Intent(ctx, MediaPlayerActivity.class);
-        intentPrevious.putExtra("DO", "previous");
-        PendingIntent pendPrevious = PendingIntent.getService(ctx, 0, intentPrevious, 0);
-        contentView.setOnClickPendingIntent(R.id.imgBtnPrevious, pendPrevious);
-
-        Intent intentPlayStop = new Intent(ctx, MediaPlayerActivity.class);
-        intentPlayStop.putExtra("DO", "playstop");
-        PendingIntent pendPlayStop = PendingIntent.getService(ctx, 1, intentPlayStop, 0);
-        contentView.setOnClickPendingIntent(R.id.imgBtnPlay, pendPlayStop);
-
-        Intent intentNext = new Intent(ctx, MediaPlayerActivity.class);
-        intentNext.putExtra("DO", "next");
-        PendingIntent pendNext = PendingIntent.getService(ctx, 2, intentNext, 0);
-        contentView.setOnClickPendingIntent(R.id.imgBtnPrevious, pendNext);
-    }
 }

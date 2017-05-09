@@ -57,55 +57,39 @@ public class MusicFragment extends Fragment {
         btnNext = (Button)view.findViewById(R.id.btnSongPlus);
 
         btnPlayStop.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
                 Preferences.init(getActivity().getApplicationContext());
-
                 Intent playIntent = new Intent(MusicService.PLAYMEDIA);
                 playIntent.setPackage(v.getContext().getPackageName());
-
                 playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
-
                 v.getContext().startService(playIntent);
-
             }
         });
         btnPrev.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 Preferences.init(getActivity().getApplicationContext());
-
                 Intent playIntent = new Intent(MusicService.PREVMEDIA);
-
                 playIntent.setPackage(v.getContext().getPackageName());
-
                 playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
-
                 v.getContext().startService(playIntent);
-
             }
         });
 
         btnNext.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
                 Preferences.init(getActivity().getApplicationContext());
-
                 Intent playIntent = new Intent(MusicService.NEXTMEDIA);
-
                 playIntent.setPackage(v.getContext().getPackageName());
-
                 playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
-
                 v.getContext().startService(playIntent);
-
             }
         });
-
         return view;
     }
 
