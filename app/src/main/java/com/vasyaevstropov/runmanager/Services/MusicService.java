@@ -9,11 +9,14 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.Notification.PlayerNotification;
+
+import java.util.ArrayList;
 
 
 public class MusicService extends Service {
@@ -29,6 +32,7 @@ public class MusicService extends Service {
     private final int PREV = -1;
     private final int PLAY =  0;
     private final int NEXT =  1;
+    private MediaContent mediaContent;
 
 
     @Override
@@ -39,14 +43,28 @@ public class MusicService extends Service {
                 intent.getAction().contains(NEXTMEDIA)) {
 
             if (intent.getAction().contains(PLAYMEDIA)) {
-                try {
-                    uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
 
+                if (intent.getExtras().getParcelable(MediaContent.currentSong)!=null){
+
+                    Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
+
+                    mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
+
+                    uri = Uri.parse(mediaContent.getUri());
+
+                    playNewMedia(uri);
+
+                }else {
+
+                    try {
+                        uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
                         playMedia(uri);
 
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
             if (intent.getAction().contains(PREVMEDIA)) {
 

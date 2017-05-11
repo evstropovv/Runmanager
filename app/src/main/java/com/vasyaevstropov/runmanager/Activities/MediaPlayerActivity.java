@@ -54,9 +54,14 @@ public class MediaPlayerActivity extends AppCompatActivity {
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(view.getContext(), MusicService.class);
+                Intent intent = new Intent(MusicService.PLAYMEDIA);
+                intent.setPackage(getApplicationContext().getPackageName());
                 intent.putExtra(MediaContent.currentSong, arrayMediaContent.get(position));
                 startService(intent);
+
+//                Intent playIntent = new Intent(MusicService.PLAYMEDIA);
+//                playIntent.setPackage(v.getContext().getPackageName());
+//                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
 
                 Preferences.init(view.getContext());
                 Preferences.setLastMusic(position);
