@@ -77,15 +77,24 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     btnStart.setText("STOP");
-                    tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
-                    tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
-                    tvTime.setText("" + intent.getExtras().get("seconds"));
+                    if (intent.getExtras().get("coordinates")!= null){
+                        tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
+                        tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+                    }
+                   if (intent.getExtras().get("seconds") != null){
+                       long seconds = intent.getExtras().getLong("seconds");
 
+                       String sec = String.format("%02d:%02d:%02d",seconds / 60 ,seconds / 60, seconds % 60);
+
+                       tvTime.setText(sec);
+                   }
                 }
             };
         }
-        registerReceiver(broadcastReceiver, new IntentFilter("timer_update"));
-        registerReceiver(broadcastReceiver, new IntentFilter("location_update")); // Регистрация ресивера (для Сервиса)
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("location_update");
+        intentFilter.addAction("timer_update");
+        registerReceiver(broadcastReceiver, intentFilter); // Регистрация ресивера (для Сервиса)
 
     }
 
@@ -136,11 +145,9 @@ public class MainActivity extends AppCompatActivity
                         .findFragmentById(R.id.map_main);
 
 
-
         if (!runtimePermission()) //запрос на GPS
             enableButtons();
     }
-
 
 
     private void enableButtons() {
@@ -192,7 +199,7 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { //перехват ответа на разрешения
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 100) {
-            if (    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[1] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[2] == PackageManager.PERMISSION_GRANTED &&
                     grantResults[3] == PackageManager.PERMISSION_GRANTED &&
@@ -279,10 +286,10 @@ public class MainActivity extends AppCompatActivity
 
         Location getLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        if (getLastLocation == null){
+        if (getLastLocation == null) {
             try {
                 getLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

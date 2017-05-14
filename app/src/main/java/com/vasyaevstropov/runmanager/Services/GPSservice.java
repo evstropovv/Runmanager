@@ -57,11 +57,13 @@ public class GPSservice extends Service {
 
     @Override
     public void onCreate() {
+        createTimer();
+
         //дата и время на момент старта
         calendar = Calendar.getInstance();
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         date = calendar.get(Calendar.DATE)+"."+calendar.get(Calendar.MONTH)+"."+calendar.get(Calendar.YEAR) ;
-        createTimer();
+
         //подключаем к БД
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
         lastNumberRecord = dbOpenHelper.getLastNumberRecord(db);
@@ -114,6 +116,8 @@ public class GPSservice extends Service {
 
         setForegroundNotification();
 
+
+
     }
 
     private void setForegroundNotification() {
@@ -139,6 +143,7 @@ public class GPSservice extends Service {
             locationManager.removeUpdates(listener) ;
         }
         writeToSegmentTable();
+        timer.cancel();
     }
 
     private void writeToSegmentTable() {
@@ -166,6 +171,8 @@ public class GPSservice extends Service {
         timer = new CountDownTimer(1000000000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                Toast.makeText(getApplicationContext(), "TIMER STARTED", Toast.LENGTH_LONG).show();
+
                 seconds = 1000000 - millisUntilFinished / 1000;
                 Intent i = new Intent("timer_update");
                 i.putExtra("seconds", seconds);
@@ -175,6 +182,6 @@ public class GPSservice extends Service {
             @Override
             public void onFinish() {
             }
-        };
+        }.start();
     }
 }
