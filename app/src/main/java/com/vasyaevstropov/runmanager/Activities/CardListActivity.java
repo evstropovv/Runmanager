@@ -1,6 +1,7 @@
 package com.vasyaevstropov.runmanager.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +9,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.vasyaevstropov.runmanager.Adapters.RecyclerAdapter;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.R;
 
 import java.util.ArrayList;
@@ -36,11 +39,12 @@ public class CardListActivity extends AppCompatActivity {
         Preferences.init(this);
         setTheme(Preferences.getStyle());
 
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initToolBar();
 
         dayOfWeekList = new ArrayList<>();
         dateList = new ArrayList<>();
@@ -57,6 +61,16 @@ public class CardListActivity extends AppCompatActivity {
 
     }
 
+    private void initToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() !=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+    }
+
     private void setListOfRuns(){
 
         DBOpenHelper dbOpenHelper = new DBOpenHelper(this);
@@ -67,4 +81,13 @@ public class CardListActivity extends AppCompatActivity {
         distanceList = listOfRuns.get(2);
         numberRecordList = listOfRuns.get(3);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

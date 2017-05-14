@@ -1,5 +1,7 @@
 package com.vasyaevstropov.runmanager.Services;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,14 +12,18 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
+import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.Coordinates;
+import com.vasyaevstropov.runmanager.R;
 
 import java.util.Calendar;
 
@@ -37,7 +43,9 @@ public class GPSservice extends Service {
     private Calendar calendar;
     private int dayOfWeek;
     private String date;
+    long seconds = 0;
     private double sumdistance = 0;
+    CountDownTimer timer;
 
     private long time = 0 ; // in milliseconds - 3000 6000 9000 etc.
 
@@ -53,7 +61,7 @@ public class GPSservice extends Service {
         calendar = Calendar.getInstance();
         dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         date = calendar.get(Calendar.DATE)+"."+calendar.get(Calendar.MONTH)+"."+calendar.get(Calendar.YEAR) ;
-
+        createTimer();
         //подключаем к БД
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
         lastNumberRecord = dbOpenHelper.getLastNumberRecord(db);
@@ -61,7 +69,6 @@ public class GPSservice extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 double speed = 0;
-                                Intent i = new Intent("location_update");
                 if ((lastX==0)&&(lastY==0)) {
                     lastX = location.getLongitude();
                     lastY = location.getLatitude();
@@ -73,6 +80,7 @@ public class GPSservice extends Service {
                 lastX = location.getLongitude();
                 lastY = location.getLatitude();
 
+                Intent i = new Intent("location_update");
                 i.putExtra("coordinates", location.getLongitude() + " " +location.getLatitude());
                 i.putExtra("speed", speed);
                 sendBroadcast(i);
@@ -102,8 +110,25 @@ public class GPSservice extends Service {
         };
         locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,3000, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,3000, 0, listener); //3000 - 3 секунды при обновлении
 
+        setForegroundNotification();
+
+    }
+
+    private void setForegroundNotification() {
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Runmanager")
+                .setContentText("Saving GPS coordinates...")
+                .setContentIntent(pendingIntent).build();
+        startForeground(1337, notification);
     }
 
 
@@ -135,5 +160,21 @@ public class GPSservice extends Service {
         distance = Math.pow(distance, 2);
 
         return Math.sqrt(distance);
+    }
+
+    private void createTimer() {
+        timer = new CountDownTimer(1000000000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                seconds = 1000000 - millisUntilFinished / 1000;
+                Intent i = new Intent("timer_update");
+                i.putExtra("seconds", seconds);
+                sendBroadcast(i);
+            }
+
+            @Override
+            public void onFinish() {
+            }
+        };
     }
 }

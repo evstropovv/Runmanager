@@ -3,12 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -19,24 +23,32 @@
 
 
      <style name="AppTheme.Dark" parent="AppTheme.NoActionBar">
+         <item name="windowActionBar">false</item>
+         <item name="windowNoTitle">true</item>
             <item name="colorPrimary">#434242</item>
             <item name="colorPrimaryDark">#000000</item>
             <item name="colorAccent">#FF8A65</item>
      </style>
 
     <style name="AppTheme.Night" parent="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">#2E7D32</item>
         <item name="colorPrimaryDark">#1B5E20</item>
         <item name="colorAccent">#FF4081</item>
     </style>
 
     <style name="AppTheme.Blue" parent="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">#2196F3</item>
         <item name="colorPrimaryDark">#1565C0</item>
         <item name="colorAccent">#FF4081</item>
     </style>
 
     <style name="AppTheme.Silver" parent="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">#9E9E9E</item>
         <item name="colorPrimaryDark">#424242</item>
         <item name="colorAccent">#FF4081</item>

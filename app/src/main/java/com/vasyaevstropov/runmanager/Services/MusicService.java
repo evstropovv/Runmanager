@@ -44,11 +44,12 @@ public class MusicService extends Service {
 
             if (intent.getAction().contains(PLAYMEDIA)) {
 
+
                 if (intent.getExtras().getParcelable(MediaContent.currentSong)!=null){
 
+                    mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
                     Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
 
-                    mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
 
                     uri = Uri.parse(mediaContent.getUri());
 
@@ -62,6 +63,7 @@ public class MusicService extends Service {
 
                     } catch (NullPointerException e) {
                         e.printStackTrace();
+
                     }
                 }
 

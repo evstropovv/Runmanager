@@ -12,7 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
@@ -25,15 +29,15 @@ import java.util.ArrayList;
 
 public class MusicFragment extends Fragment {
 
-    private boolean musicBound = false;
-
-    private boolean paused = false, playbackPaused = false;
-    MusicService musicService;
     Button btnPlayStop, btnPrev, btnNext;
 
-    private ArrayList<MediaContent> arrayMediaContent;
+    ArrayAdapter<String> adapter;
+    ArrayList<String> arraySongNames;
+    ListView musicListView;
+    TextView tvSongName;
 
-    ServiceConnection musicConnection;
+
+    private ArrayList<MediaContent> arrayMediaContent;
 
     @Override
     public void onAttach(Context context) {
@@ -48,13 +52,22 @@ public class MusicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d("VasyaLog", getClass().getName() + " onCreateView");
-
         View view = inflater.inflate(R.layout.fragment_music, container, false);
+
+        setPlayerButtons(view);
+
+        doStuff(view);
+        setTextViewSongName();
+
+        return view;
+    }
+
+    private void setPlayerButtons(View view) {
 
         btnPlayStop = (Button) view.findViewById(R.id.btnPlayStop);
         btnPrev = (Button)view.findViewById(R.id.btnSongMinus);
         btnNext = (Button)view.findViewById(R.id.btnSongPlus);
+        tvSongName = (TextView)view.findViewById(R.id.tvSongName);
 
         btnPlayStop.setOnClickListener(new View.OnClickListener() {
 
@@ -90,7 +103,53 @@ public class MusicFragment extends Fragment {
                 v.getContext().startService(playIntent);
             }
         });
-        return view;
+
+    }
+
+    private void doStuff(View view) {
+        arrayMediaContent = new ArrayList<>();
+        arraySongNames = new ArrayList<>();
+
+        fillArrayMediaContent();
+
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arraySongNames);
+        musicListView = (ListView)view.findViewById(R.id.musicLV);
+        musicListView.setAdapter(adapter);
+        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent intent = new Intent(MusicService.PLAYMEDIA);
+                intent.setPackage(getActivity().getApplicationContext().getPackageName());
+                intent.putExtra(MediaContent.currentSong, arrayMediaContent.get(position));
+                getActivity().startService(intent);
+
+                Preferences.init(view.getContext());
+                Preferences.setLastMusic(position);
+
+                setTextViewSongName();
+            }
+        });
+    }
+
+    private void fillArrayMediaContent(){
+
+        MusicStorage storage = new MusicStorage(getActivity());
+
+        arrayMediaContent = storage.getMusicList();
+
+        fillArraySongName();
+    }
+
+    private void fillArraySongName(){
+        for (int i = 0; i < arrayMediaContent.size() ; i++) {
+            arraySongNames.add(arrayMediaContent.get(i).getTitle() + "\n" + arrayMediaContent.get(i).getArtist());
+        }
+    }
+
+    private void setTextViewSongName(){
+        Preferences.init(getActivity());
+        tvSongName.setText(arraySongNames.get(Preferences.getLastMusic()));
     }
 
 }

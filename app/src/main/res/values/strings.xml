@@ -1,4 +1,10 @@
 <resources>
+
+    <string name="settings">Настройки</string>
+    <string name="music_player">Музыкальный плеер</string>
+    <string name="run_history">История пробежек</string>
+
+
     <string name="app_name">Runmanager</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

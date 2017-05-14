@@ -10,7 +10,8 @@
     tools:context="com.vasyaevstropov.runmanager.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <LinearLayout
+
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -19,8 +20,7 @@
             android:id="@+id/map_main"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
+            android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -32,66 +32,64 @@
             map:uiZoomControls="false"
             map:uiZoomGestures="true" />
 
-        <FrameLayout
-            android:id="@+id/musicFrame"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_height="match_parent">
 
-        </FrameLayout>
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="START"
+                android:textSize="20sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/btnStart"
+                android:layout_alignEnd="@+id/tvCoordinates"
+                android:layout_alignRight="@+id/tvCoordinates"
+                android:layout_marginBottom="63dp"
+                android:text="0 km/h"
+                android:textSize="25sp" />
 
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="START"
-        android:textSize="20sp" />
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/tvSpeed"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="43dp"
+                android:text="0:00:00"
+                android:textSize="30sp"
+                android:textStyle="normal|bold" />
 
-    <TextView
-        android:text="0 km/h"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="63dp"
-        android:id="@+id/tvSpeed"
-        android:textSize="25sp"
-        android:layout_above="@+id/btnStart"
-        android:layout_alignRight="@+id/tvCoordinates"
-        android:layout_alignEnd="@+id/tvCoordinates" />
+            <TextView
+                android:id="@+id/tvCoordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnStart"
+                android:layout_centerHorizontal="true"
+                android:text="coordinates" />
 
-    <TextView
-        android:text="0:00:00"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvTime"
-        android:textStyle="normal|bold"
-        android:textSize="30sp"
-        android:layout_above="@+id/tvSpeed"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="43dp" />
+            <Button
+                android:id="@+id/btnRecycler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tvCoordinates"
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/tvCoordinates"
+                android:layout_marginBottom="76dp"
+                android:text="RECYCLER" />
 
-    <TextView
-        android:text="coordinates"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvCoordinates"
-        android:layout_below="@+id/btnStart"
-        android:layout_centerHorizontal="true" />
 
-    <Button
-        android:id="@+id/btnRecycler"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RECYCLER"
-        android:layout_marginBottom="76dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/tvCoordinates"
-        android:layout_alignStart="@+id/tvCoordinates" />
+        </RelativeLayout>
+
+        <include layout="@layout/bottom_sheet" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
 </RelativeLayout>

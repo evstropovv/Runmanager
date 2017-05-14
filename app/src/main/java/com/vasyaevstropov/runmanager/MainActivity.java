@@ -14,7 +14,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -62,7 +61,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean startGpsService = false;
     private BroadcastReceiver broadcastReceiver;
-    CountDownTimer timer;
+
 
     MusicFragment musicFragment;
     android.app.FragmentTransaction fragmTrans;
@@ -74,17 +73,20 @@ public class MainActivity extends AppCompatActivity
 
 
         if (broadcastReceiver == null) { //Используется для связи с GPSservice;
-
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     btnStart.setText("STOP");
                     tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
                     tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+                    tvTime.setText("" + intent.getExtras().get("seconds"));
+
                 }
             };
         }
+        registerReceiver(broadcastReceiver, new IntentFilter("timer_update"));
         registerReceiver(broadcastReceiver, new IntentFilter("location_update")); // Регистрация ресивера (для Сервиса)
+
     }
 
     @Override
@@ -134,25 +136,12 @@ public class MainActivity extends AppCompatActivity
                         .findFragmentById(R.id.map_main);
 
 
-        createTimer();
 
         if (!runtimePermission()) //запрос на GPS
             enableButtons();
     }
 
-    private void createTimer() {
-        timer = new CountDownTimer(1000000000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long seconds = 1000000 - millisUntilFinished / 1000;
-                tvTime.setText("" + seconds);
-            }
 
-            @Override
-            public void onFinish() {
-            }
-        };
-    }
 
     private void enableButtons() {
         mapFragment.getMapAsync(this);
@@ -164,13 +153,10 @@ public class MainActivity extends AppCompatActivity
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     startService(intent);
                     btnStart.setText("STOP");
-                    startTimer(MainActivity.startGpsService = true);
                 } else {
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     stopService(intent);
                     btnStart.setText("START");
-                    startTimer(MainActivity.startGpsService = false);
-
                 }
             }
         });
@@ -184,15 +170,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-    private void startTimer(boolean b) {
-        if (b) {
-            timer.start();
-        } else {
-            timer.cancel();
-        }
-
-    }
 
     private boolean runtimePermission() { //запрос у пользователя разрешений на GPS для андроид 6.0 +
         if (Build.VERSION.SDK_INT >= 23
@@ -247,19 +224,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent settingIntent = new Intent(this, SettingActivity.class);
             startActivity(settingIntent);
             finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -269,20 +241,20 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.history) {
+            // открыть история пробежек
+
+            Intent intent = new Intent(MainActivity.this, CardListActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.settings) {
+            //настройки
             Intent settingIntent = new Intent(this, SettingActivity.class);
             startActivity(settingIntent);
             finish();
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.mus_player) {
+            //музыкальный плеер
             Intent mediaPlayerIntent = new Intent(this, MediaPlayerActivity.class);
             startActivity(mediaPlayerIntent);
         }
@@ -295,16 +267,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         setMapStyle(googleMap);
-        getLastLocation();
+        setLastLocation();
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 14.5f), 10, null); //приближение
 
     }
 
-    private void getLastLocation() {
+    private void setLastLocation() {
 
         LocationManager locationManager = (LocationManager) getSystemService
                 (Context.LOCATION_SERVICE);
+
         Location getLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (getLastLocation == null){
+            try {
+                getLastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
         try {
             lat1 = getLastLocation.getLatitude();
