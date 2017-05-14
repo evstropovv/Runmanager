@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.vasyaevstropov.runmanager.Activities.CardListActivity;
 import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
@@ -50,7 +52,7 @@ import com.vasyaevstropov.runmanager.Services.GPSservice;
 
 //Главное окно программы
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LocationListener {
 
     Button btnStart, btnRecycler;
     TextView tvTime;
@@ -80,11 +82,13 @@ public class MainActivity extends AppCompatActivity
                     if (intent.getExtras().get("coordinates")!= null){
                         tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
                         tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+
+
                     }
                    if (intent.getExtras().get("seconds") != null){
                        long seconds = intent.getExtras().getLong("seconds");
 
-                       String sec = String.format("%02d:%02d:%02d",seconds / 60 ,seconds / 60, seconds % 60);
+                       String sec = String.format("%02d:%02d:%02d",seconds / 3600 ,seconds / 60, seconds % 60);
 
                        tvTime.setText(sec);
                    }
@@ -275,6 +279,7 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         setMapStyle(googleMap);
         setLastLocation();
+
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 14.5f), 10, null); //приближение
 
     }
@@ -314,5 +319,48 @@ public class MainActivity extends AppCompatActivity
         } catch (Resources.NotFoundException e) {
             Log.e("Log.e", "Can't find style of map", e);
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            // ---Get current location latitude, longitude---
+
+//            Log.d("LOCATION CHANGED", location.getLatitude() + "");
+//            Log.d("LOCATION CHANGED", location.getLongitude() + "");
+//            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+//
+//            Marker currentLocationMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
+//            // Move the camera instantly to hamburg with a zoom of 15.
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+//            // Zoom in, animating the camera.
+//            if (!zoomed) {
+//                mMap.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
+//                zoomed = true;
+//            }
+//            if (!firstPass){
+//                currentLocationMarker.remove();
+//            }
+//            firstPass = false;
+//            Toast.makeText(MapViewActivity.this,"Latitude = "+
+//                            location.getLatitude() + "" +"Longitude = "+ location.getLongitude(),
+//                    Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
