@@ -58,6 +58,7 @@ public class GPSservice extends Service {
     @Override
     public void onCreate() {
         createTimer();
+        MainActivity.startGpsService = true;
 
         //дата и время на момент старта
         calendar = Calendar.getInstance();
@@ -85,6 +86,7 @@ public class GPSservice extends Service {
                 Intent i = new Intent("location_update");
                 i.putExtra("coordinates", location.getLongitude() + " " +location.getLatitude());
                 i.putExtra("speed", speed);
+                i.putExtra("location", location);
                 sendBroadcast(i);
 
                 //Записываем в базу координаты...
@@ -144,6 +146,7 @@ public class GPSservice extends Service {
         }
         writeToSegmentTable();
         timer.cancel();
+        MainActivity.startGpsService = false;
     }
 
     private void writeToSegmentTable() {

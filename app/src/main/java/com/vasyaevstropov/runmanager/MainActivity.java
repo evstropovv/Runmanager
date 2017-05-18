@@ -2,6 +2,7 @@ package com.vasyaevstropov.runmanager;
 
 import android.Manifest;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,11 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,20 +45,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.vasyaevstropov.runmanager.Activities.CardListActivity;
 import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Fragments.MusicFragment;
+import com.vasyaevstropov.runmanager.Models.Coordinates;
 import com.vasyaevstropov.runmanager.Services.GPSservice;
+import com.vasyaevstropov.runmanager.Services.SinhrService;
 
 //Главное окно программы
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LocationListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     Button btnStart, btnRecycler;
     TextView tvTime;
@@ -60,6 +70,7 @@ public class MainActivity extends AppCompatActivity
     SupportMapFragment mapFragment;
     double lat1 = 0;
     double long1 = 0;
+    Toolbar toolbar;
 
     public static boolean startGpsService = false;
     private BroadcastReceiver broadcastReceiver;
@@ -82,8 +93,9 @@ public class MainActivity extends AppCompatActivity
                     if (intent.getExtras().get("coordinates")!= null){
                         tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
                         tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+                        Location location = (Location) intent.getExtras().getParcelable("location");
 
-
+                        updateMapPosition(location);
                     }
                    if (intent.getExtras().get("seconds") != null){
                        long seconds = intent.getExtras().getLong("seconds");
@@ -119,18 +131,27 @@ public class MainActivity extends AppCompatActivity
         setTheme(Preferences.getStyle());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        Toast.makeText(this, getTheme().toString(), Toast.LENGTH_SHORT).show();
+        initToolbar();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initializeBtnTV();
+
+        initializeMapFragment();
+        initilalizeMusicFragment();
+
+        if (!runtimePermission()) //запрос на GPS
+            enableButtons();
+    }
+
+    private void initializeBtnTV() {
         btnStart = (Button) findViewById(R.id.btnStart);
         btnRecycler = (Button) findViewById(R.id.btnRecycler);
         btnRecycler.setOnClickListener(new View.OnClickListener() {
@@ -138,19 +159,35 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), CardListActivity.class);
                 startActivity(intent);
+
+                Intent intent1 = new Intent(v.getContext(), SinhrService.class);
+                startService(intent1);
+
             }
         });
 
         tvCurrentLocation = (TextView) findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
+    }
+
+    private void initializeMapFragment() {
         mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map_main);
+    }
 
+    private void initilalizeMusicFragment() {
+        musicFragment = new MusicFragment();  //активируем фрагмент с музыкой.
+        fragmTrans = getFragmentManager().beginTransaction();
 
-        if (!runtimePermission()) //запрос на GPS
-            enableButtons();
+        fragmTrans.add(R.id.musicFrame, musicFragment);
+        fragmTrans.commit();
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
 
@@ -171,16 +208,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
-
-        musicFragment = new MusicFragment();  //активируем фрагмент с музыкой.
-        fragmTrans = getFragmentManager().beginTransaction();
-
-        fragmTrans.add(R.id.musicFrame, musicFragment);
-        fragmTrans.commit();
-
     }
-
 
     private boolean runtimePermission() { //запрос у пользователя разрешений на GPS для андроид 6.0 +
         if (Build.VERSION.SDK_INT >= 23
@@ -228,7 +256,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -279,7 +306,6 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         setMapStyle(googleMap);
         setLastLocation();
-
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 14.5f), 10, null); //приближение
 
     }
@@ -321,46 +347,38 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if (location != null) {
-            // ---Get current location latitude, longitude---
+    private void updateMapPosition(final Location location){
 
-//            Log.d("LOCATION CHANGED", location.getLatitude() + "");
-//            Log.d("LOCATION CHANGED", location.getLongitude() + "");
-//            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//
-//            Marker currentLocationMarker = mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
-//            // Move the camera instantly to hamburg with a zoom of 15.
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-//            // Zoom in, animating the camera.
-//            if (!zoomed) {
-//                mMap.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
-//                zoomed = true;
-//            }
-//            if (!firstPass){
-//                currentLocationMarker.remove();
-//            }
-//            firstPass = false;
-//            Toast.makeText(MapViewActivity.this,"Latitude = "+
-//                            location.getLatitude() + "" +"Longitude = "+ location.getLongitude(),
-//                    Toast.LENGTH_LONG).show();
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                googleMap.clear();
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                final Marker currentLocationMarker = googleMap.addMarker(new MarkerOptions().position(currentLocation));
+                currentLocationMarker.setVisible(false);
 
-        }
-    }
+                final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), android.R.drawable.ic_menu_compass);
+                final Bitmap target = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                final Canvas canvas = new Canvas(target);
+                ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+                animator.setDuration(200);
+                animator.setStartDelay(500);
+                final Rect originalRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                final RectF scaledRect = new RectF();
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float scale = (float) animation.getAnimatedValue();
+                        scaledRect.set(0, 0, originalRect.right * scale, originalRect.bottom * scale);
+                        canvas.drawBitmap(bitmap, originalRect, scaledRect, null);
+                        currentLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(target));
+                        currentLocationMarker.setVisible(true);
+                    }
+                });
+                animator.start();
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+            }
+        });
     }
 }

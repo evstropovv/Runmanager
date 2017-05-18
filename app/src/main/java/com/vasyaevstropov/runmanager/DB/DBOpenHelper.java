@@ -68,6 +68,43 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public ArrayList<HashMap<String,String>> getSpeedTable(SQLiteDatabase db) { //получаем последний ИД записанный в Segmenttable
+        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+        HashMap<String, String> map;
+
+        try {
+            Cursor c = db.rawQuery("SELECT * FROM " + Coordinates.TABLE_NAME_SPEEDTABLE, null);
+            if (c.moveToFirst()) {
+                int colId = c.getColumnIndex(Coordinates.COLUMN_ID);
+                int colNumbRecord = c.getColumnIndex(Coordinates.COLUMN_NUMB_RECORD);
+                int colNameRecord = c.getColumnIndex(Coordinates.COLUMN_NAME_RECORD);
+                int colLongitude = c.getColumnIndex(Coordinates.COLUMN_LONGITUDE);
+                int colLatitude = c.getColumnIndex(Coordinates.COLUMN_LATITUDE);
+                int colSpeed = c.getColumnIndex(Coordinates.COLUMN_SPEED);
+                int colTime = c.getColumnIndex(Coordinates.COLUMN_TIME);
+
+                do {
+                    map = new HashMap<>();
+                    map.put("id", String.valueOf(c.getString(colId)));
+                    map.put("number_record", String.valueOf(c.getString(colNumbRecord)));
+                    map.put("name_record", String.valueOf(c.getString(colNameRecord)));
+                    map.put("longitude", String.valueOf(c.getString(colLongitude)));
+                    map.put("latitude", String.valueOf(c.getString(colLatitude)));
+                    map.put("speed", String.valueOf(c.getString(colSpeed)));
+                    map.put("time", String.valueOf(c.getString(colTime)));
+
+                    arrayList.add(map);
+                } while (c.moveToNext());
+            }
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return arrayList;
+    }
+
+
     public void writeToSegmentTable(Coordinates coordinates) {
         SQLiteDatabase db = getWritableDatabase();
         try {

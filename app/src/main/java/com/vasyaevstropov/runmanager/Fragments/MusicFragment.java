@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Services.MusicService;
@@ -61,6 +62,8 @@ public class MusicFragment extends Fragment {
 
         return view;
     }
+
+
 
     private void setPlayerButtons(View view) {
 
@@ -149,7 +152,11 @@ public class MusicFragment extends Fragment {
 
     private void setTextViewSongName(){
         Preferences.init(getActivity());
-        tvSongName.setText(arraySongNames.get(Preferences.getLastMusic()));
+        try {
+            tvSongName.setText(arraySongNames.get(Preferences.getLastMusic()));
+        }catch (IndexOutOfBoundsException e){
+            tvSongName.setText("-");
+        }
     }
 
 }

@@ -106,7 +106,6 @@ public class MusicService extends Service {
     }
 
 
-
     private MediaContent getContent(Context baseContext, int numb) {
 
         Preferences.init(baseContext);

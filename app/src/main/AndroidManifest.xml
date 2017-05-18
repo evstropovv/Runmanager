@@ -50,6 +50,8 @@
                 <action android:name="com.vasyaevstropov.runmanager.NEXT"/>
             </intent-filter>
         </service>
+        <service android:name=".Services.SinhrService" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCWO9bAxj87GA5FPQAiPlcfYDrD2jm2Tpk" />

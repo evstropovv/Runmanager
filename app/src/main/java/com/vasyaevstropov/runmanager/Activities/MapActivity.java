@@ -72,8 +72,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void initializeChart() {
 
         ArrayList<HashMap<String, String>> arrayList = dbOpenHelper.getTimeSpeed(number);
+
         List<Entry> entries = new ArrayList<>();
-                for (int i = 0; i < arrayList.size() ; i++) {
+        for (int i = 0; i < arrayList.size() ; i++) {
             HashMap<String, String> map = arrayList.get(i);
 
             float speed = Float.parseFloat(map.get("speed"));

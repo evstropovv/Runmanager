@@ -32,6 +32,8 @@
             map:uiZoomControls="false"
             map:uiZoomGestures="true" />
 
+        <include layout="@layout/bottom_sheet" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -40,8 +42,9 @@
                 android:id="@+id/btnStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_above="@+id/tvCoordinates"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_marginBottom="18dp"
                 android:text="START"
                 android:textSize="20sp" />
 
@@ -49,21 +52,22 @@
                 android:id="@+id/tvSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/btnStart"
-                android:layout_alignEnd="@+id/tvCoordinates"
-                android:layout_alignRight="@+id/tvCoordinates"
-                android:layout_marginBottom="63dp"
+                android:layout_alignTop="@+id/tvTime"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="66dp"
                 android:text="0 km/h"
+                android:textAlignment="center"
                 android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/tvSpeed"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="43dp"
+                android:layout_marginTop="46dp"
                 android:text="0:00:00"
+                android:textAlignment="center"
                 android:textSize="30sp"
                 android:textStyle="normal|bold" />
 
@@ -71,24 +75,24 @@
                 android:id="@+id/tvCoordinates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btnStart"
+                android:layout_above="@+id/btnRecycler"
                 android:layout_centerHorizontal="true"
-                android:text="coordinates" />
+                android:layout_marginBottom="44dp"
+                android:maxLines="3"
+                android:text="coordinates"
+                android:textAlignment="center" />
 
             <Button
                 android:id="@+id/btnRecycler"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tvCoordinates"
                 android:layout_alignParentBottom="true"
-                android:layout_alignStart="@+id/tvCoordinates"
-                android:layout_marginBottom="76dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="78dp"
                 android:text="RECYCLER" />
 
 
         </RelativeLayout>
-
-        <include layout="@layout/bottom_sheet" />
 
     </android.support.design.widget.CoordinatorLayout>
 
