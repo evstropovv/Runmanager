@@ -68,11 +68,12 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public ArrayList<HashMap<String,String>> getSpeedTable(SQLiteDatabase db) { //получаем последний ИД записанный в Segmenttable
+    public ArrayList<HashMap<String,String>> getSpeedTable() { //получаем последний ИД записанный в Segmenttable
+        SQLiteDatabase db = getReadableDatabase();
         ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
         HashMap<String, String> map;
 
-        try {
+//        try {
             Cursor c = db.rawQuery("SELECT * FROM " + Coordinates.TABLE_NAME_SPEEDTABLE, null);
             if (c.moveToFirst()) {
                 int colId = c.getColumnIndex(Coordinates.COLUMN_ID);
@@ -97,9 +98,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 } while (c.moveToNext());
             }
             c.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         return arrayList;
     }
