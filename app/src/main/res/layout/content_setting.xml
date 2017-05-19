@@ -8,40 +8,45 @@
     tools:context="com.vasyaevstropov.runmanager.Activities.SettingActivity"
     tools:showIn="@layout/activity_setting">
 
-
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="11dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="11dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView2"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_style"
-                android:textAlignment="center"
-                android:textSize="16sp" />
+                android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_style"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
 
-                android:drawSelectorOnTop="true" />
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:drawSelectorOnTop="true" />
 
 
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </RelativeLayout>

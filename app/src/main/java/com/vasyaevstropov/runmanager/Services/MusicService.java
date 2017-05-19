@@ -24,14 +24,15 @@ public class MusicService extends Service {
     public static final String PLAYMEDIA = "com.vasyaevstropov.runmanager.TOGGLE_PLAYBACK";
     public static final String PREVMEDIA = "com.vasyaevstropov.runmanager.PREV";
     public static final String NEXTMEDIA = "com.vasyaevstropov.runmanager.NEXT";
+    public static final String SELECT_MEDIA = "com.vasyaevstropov.runmanager.SELECT_MEDIA";
     public static boolean ISPLAYING;
 
     Uri uri;
     MediaPlayer player;
     MediaContent content;
     private final int PREV = -1;
-    private final int PLAY =  0;
-    private final int NEXT =  1;
+    private final int PLAY = 0;
+    private final int NEXT = 1;
     private MediaContent mediaContent;
 
 
@@ -40,46 +41,39 @@ public class MusicService extends Service {
 
         if (intent.getAction().contains(PLAYMEDIA) ||
                 intent.getAction().contains(PREVMEDIA) ||
-                intent.getAction().contains(NEXTMEDIA)) {
+                intent.getAction().contains(NEXTMEDIA) ||
+                intent.getAction().contains(SELECT_MEDIA)) {
 
-            if (intent.getAction().contains(PLAYMEDIA)) {
+            if (intent.getAction().contains(SELECT_MEDIA)) {
 
+                mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
+                Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
 
-                if (intent.getExtras().getParcelable(MediaContent.currentSong)!=null){
+                uri = Uri.parse(mediaContent.getUri());
 
-                    mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
-                    Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
-
-
-                    uri = Uri.parse(mediaContent.getUri());
-
-                    playNewMedia(uri);
-
-                }else {
-
-                    try {
-                        uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
-                        playMedia(uri);
-
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-
-                    }
-                }
+                playNewMedia(uri);
 
             }
-            if (intent.getAction().contains(PREVMEDIA)) {
 
+
+            if (intent.getAction().contains(PLAYMEDIA)) {
                 try {
-
-                    uri = Uri.parse(getContent(getBaseContext(), PREV).getUri());
-
-                    playNewMedia(uri);
+                    uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
+                    playMedia(uri);
 
                 } catch (NullPointerException e) {
-
                     e.printStackTrace();
 
+                }
+            }
+
+
+            if (intent.getAction().contains(PREVMEDIA)) {
+                try {
+                    uri = Uri.parse(getContent(getBaseContext(), PREV).getUri());
+                    playNewMedia(uri);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
             }
             if (intent.getAction().contains(NEXTMEDIA)) {
@@ -96,12 +90,7 @@ public class MusicService extends Service {
 
                 }
             }
-
         }
-
-        Log.d("VasyaLog", getClass().getName() + " onStartCommand");
-        //content = intent.getExtras().getParcelable(MediaContent.currentSong);
-
         return START_STICKY;
     }
 
@@ -120,7 +109,7 @@ public class MusicService extends Service {
 
             Preferences.setLastMusic(currentMedia);
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             content = storage.getMusicList().get(Preferences.getLastMusic());
 
@@ -134,13 +123,13 @@ public class MusicService extends Service {
 
     private void playMedia(Uri uri) {
 
-        if (player !=null){
+        if (player != null) {
 
-            if (player.isPlaying()){
+            if (player.isPlaying()) {
 
                 player.pause();
 
-            } else{
+            } else {
 
                 player.start();
 
@@ -173,7 +162,6 @@ public class MusicService extends Service {
         ISPLAYING = true;
 
     }
-
 
 
     private void stopMediaPlayer() {

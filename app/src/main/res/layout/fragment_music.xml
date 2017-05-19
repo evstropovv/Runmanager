@@ -24,6 +24,7 @@
             android:orientation="horizontal">
 
             <Button
+                style="@style/AppTheme.Silver"
                 android:id="@+id/btnSongMinus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

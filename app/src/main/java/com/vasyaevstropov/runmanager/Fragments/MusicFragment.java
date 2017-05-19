@@ -54,12 +54,9 @@ public class MusicFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_music, container, false);
-
         setPlayerButtons(view);
-
         doStuff(view);
         setTextViewSongName();
-
         return view;
     }
 
@@ -76,21 +73,18 @@ public class MusicFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Preferences.init(getActivity().getApplicationContext());
+
                 Intent playIntent = new Intent(MusicService.PLAYMEDIA);
                 playIntent.setPackage(v.getContext().getPackageName());
-                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
                 v.getContext().startService(playIntent);
             }
         });
         btnPrev.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-                Preferences.init(getActivity().getApplicationContext());
+
                 Intent playIntent = new Intent(MusicService.PREVMEDIA);
                 playIntent.setPackage(v.getContext().getPackageName());
-                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
                 v.getContext().startService(playIntent);
             }
         });
@@ -99,10 +93,8 @@ public class MusicFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Preferences.init(getActivity().getApplicationContext());
                 Intent playIntent = new Intent(MusicService.NEXTMEDIA);
                 playIntent.setPackage(v.getContext().getPackageName());
-                playIntent.putExtra(MediaContent.currentSong, Preferences.getLastMusic());
                 v.getContext().startService(playIntent);
             }
         });
@@ -122,9 +114,11 @@ public class MusicFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent(MusicService.PLAYMEDIA);
+                Intent intent = new Intent(MusicService.SELECT_MEDIA);
                 intent.setPackage(getActivity().getApplicationContext().getPackageName());
+
                 intent.putExtra(MediaContent.currentSong, arrayMediaContent.get(position));
+
                 getActivity().startService(intent);
 
                 Preferences.init(view.getContext());

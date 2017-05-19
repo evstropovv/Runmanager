@@ -224,16 +224,18 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                     int dayofweek = c2.getColumnIndex(Coordinates.COLUMN_DAYOFWEEK);
                     int date = c2.getColumnIndex(Coordinates.COLUMN_DATE);
                     int distance = c2.getColumnIndex(Coordinates.COLUMN_DISTANCE);
+
                     do {
                         numberRecordList.add(c2.getString(id));
+
                         dayOfWeekList.add(c2.getString(dayofweek));
                         dateList.add(c2.getString(date));
                         distanceList.add(c2.getString(distance));
 
                     } while (c2.moveToNext());
+
                     c2.close();
                 }
-
             db.close();
 
             listOfRuns.add(dayOfWeekList);
@@ -242,9 +244,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             listOfRuns.add(numberRecordList);
 
         } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+            e.printStackTrace();
+
+        }
         return listOfRuns;
     }
 
