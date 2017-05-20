@@ -12,6 +12,7 @@ import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.os.Build;
+import android.support.annotation.BoolRes;
 import android.support.annotation.RequiresApi;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -37,18 +38,20 @@ public class PlayerNotification extends Notification {
     private Context ctx;
     private NotificationManager notificationManager;
     private MediaContent mediaContent;
+    Boolean isPlaing;
 
-    public PlayerNotification(Context context, MediaContent mediaContent) {
+    public PlayerNotification(Context context, MediaContent mediaContent, Boolean isPlaying) {
         super();
         ctx = context;
         this.mediaContent = mediaContent;
+        this.isPlaing = isPlaying;
 
 
-        if ( Build.VERSION.SDK_INT >= 21 ) {
-            Toast.makeText(context, Build.VERSION.SDK_INT+"", Toast.LENGTH_LONG).show();
+        if (Build.VERSION.SDK_INT >= 21) {
+            Toast.makeText(context, Build.VERSION.SDK_INT + "", Toast.LENGTH_LONG).show();
             buildNotify21(ctx);
-        } else{
-            Toast.makeText(context, Build.VERSION.SDK_INT+"", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, Build.VERSION.SDK_INT + "", Toast.LENGTH_LONG).show();
             buldNotify15(ctx);
         }
 
@@ -97,16 +100,15 @@ public class PlayerNotification extends Notification {
         // Create a new MediaSession
         final MediaSession mediaSession = new MediaSession(context, "debug tag");
         // Update the current metadata
-
         mediaSession.setMetadata(new MediaMetadata.Builder()
                 .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, artwork)
                 .putString(MediaMetadata.METADATA_KEY_ARTIST, mediaContent.getArtist())
                 .putString(MediaMetadata.METADATA_KEY_ALBUM, " ")
                 .putString(MediaMetadata.METADATA_KEY_TITLE, mediaContent.getTitle())
                 .build());
-        // Indicate you're ready to receive media commands
+
         mediaSession.setActive(true);
-        // Attach a new Callback to receive MediaSession updates
+
         mediaSession.setCallback(new MediaSession.Callback() {
             public void onPause() {
                 super.onPause();
@@ -123,34 +125,35 @@ public class PlayerNotification extends Notification {
         // Indicate you want to receive transport controls via your Callback
         mediaSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
-        // Create a new Notification
+
         final Notification noti = new Notification.Builder(context)
-                // Hide the timestamp
+
                 .setShowWhen(false)
-                // Set the Notification style
+
                 .setStyle(new Notification.MediaStyle()
-                        // Attach our MediaSession token
-                .setMediaSession(mediaSession.getSessionToken())
-                // Show our playback controls in the compat view
-                .setShowActionsInCompactView(1,2)) //0 - prev, 1 - play, 2 - next
-                // Set the Notification color
+
+                        .setMediaSession(mediaSession.getSessionToken())
+
+                        .setShowActionsInCompactView(1, 2)) //0 - prev, 1 - play, 2 - next
+
                 .setColor(ctx.getResources().getColor(R.color.colorAccent))
-                // Set the large and small icons
+
                 .setLargeIcon(artwork)
                 .setSmallIcon(android.R.drawable.ic_media_play)
-                // Set Notification content information
+
                 .setContentText(mediaContent.getArtist())
                 .setContentInfo("")
                 .setContentTitle(mediaContent.getTitle())
                 // Add some playback controls
                 .addAction(android.R.drawable.ic_media_previous, "prev", retreivePlaybackAction(3, ctx))
-                .addAction(android.R.drawable.ic_media_pause, "pause", retreivePlaybackAction(1, ctx))
+                .addAction(isPlaing ? android.R.drawable.ic_media_pause : android.R.drawable.ic_media_play,
+                        "pause",
+                        retreivePlaybackAction(1, ctx))
                 .addAction(android.R.drawable.ic_media_next, "next", retreivePlaybackAction(2, ctx))
+
+                .setContentIntent(retreivePlaybackAction(4, ctx))
+
                 .build();
-
-        // Do something with your TransportControls
-
-        final MediaController.TransportControls controls = mediaSession.getController().getTransportControls();
 
         ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE)).notify(1, noti);
     }

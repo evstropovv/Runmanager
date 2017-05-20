@@ -76,7 +76,6 @@ public class Preferences { //Класс для сохранения настро
     }
 
 
-
     public static void setLastMusic(int musicPosition){
         if (preferences == null) {
             init();

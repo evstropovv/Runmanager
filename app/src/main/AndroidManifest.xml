@@ -48,6 +48,7 @@
                 <action android:name="com.vasyaevstropov.runmanager.TOGGLE_PLAYBACK"/>
                 <action android:name="com.vasyaevstropov.runmanager.PREV"/>
                 <action android:name="com.vasyaevstropov.runmanager.NEXT"/>
+                <action android:name="com.vasyaevstropov.runmanager.SELECT_MEDIA"/>
             </intent-filter>
         </service>
         <service android:name=".Services.SinhrService" />

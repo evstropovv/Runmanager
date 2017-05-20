@@ -16,6 +16,7 @@ import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.Notification.PlayerNotification;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -38,16 +39,21 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("Service_LOG","onStartCommand");
 
         if (intent.getAction().contains(PLAYMEDIA) ||
                 intent.getAction().contains(PREVMEDIA) ||
                 intent.getAction().contains(NEXTMEDIA) ||
                 intent.getAction().contains(SELECT_MEDIA)) {
 
+            Log.d("Service_LOG","PLAYMEDIA PREVMEDIA NEXTMEDIA SELECT_MEDIA");
+
             if (intent.getAction().contains(SELECT_MEDIA)) {
+                Log.d("Service_LOG","SELECT_MEDIA");
+
+                Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
 
                 mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
-                Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
 
                 uri = Uri.parse(mediaContent.getUri());
 
@@ -57,6 +63,7 @@ public class MusicService extends Service {
 
 
             if (intent.getAction().contains(PLAYMEDIA)) {
+                Log.d("Service_LOG","PLAYMEDIA");
                 try {
                     uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
                     playMedia(uri);
@@ -69,6 +76,7 @@ public class MusicService extends Service {
 
 
             if (intent.getAction().contains(PREVMEDIA)) {
+                Log.d("Service_LOG","PREVMEDIA");
                 try {
                     uri = Uri.parse(getContent(getBaseContext(), PREV).getUri());
                     playNewMedia(uri);
@@ -77,48 +85,38 @@ public class MusicService extends Service {
                 }
             }
             if (intent.getAction().contains(NEXTMEDIA)) {
+                Log.d("Service_LOG","NEXTMEDIA");
 
                 try {
-
                     uri = Uri.parse(getContent(getBaseContext(), NEXT).getUri());
-
                     playNewMedia(uri);
-
                 } catch (NullPointerException e) {
-
                     e.printStackTrace();
-
                 }
             }
         }
         return START_STICKY;
     }
 
-
     private MediaContent getContent(Context baseContext, int numb) {
-
         Preferences.init(baseContext);
-
         MusicStorage storage = new MusicStorage(getBaseContext());
-
         try {
-
             int currentMedia = Preferences.getLastMusic() + numb;
-
             content = storage.getMusicList().get(currentMedia);
-
             Preferences.setLastMusic(currentMedia);
-
         } catch (Exception e) {
-
             content = storage.getMusicList().get(Preferences.getLastMusic());
-
         }
-
-        new PlayerNotification(baseContext, content);
-
+        updateCurrentSong(baseContext, content, true);
 
         return content;
+    }
+
+    private void updateCurrentSong(Context baseContext, MediaContent content, boolean b) {
+        new PlayerNotification(baseContext, content, b);
+        sendBroadc(mediaContent.getArtist() + "\n" + mediaContent.getTitle(), b);
+        ISPLAYING = b;
     }
 
     private void playMedia(Uri uri) {
@@ -129,20 +127,19 @@ public class MusicService extends Service {
 
                 player.pause();
 
+                updateCurrentSong(getBaseContext(), content, false);
+
             } else {
-
                 player.start();
-
             }
 
         } else {
-
             playNewMedia(uri);
-
         }
 
-        ISPLAYING = true;
     }
+
+
 
 
     private void playNewMedia(Uri uri) {
@@ -155,36 +152,67 @@ public class MusicService extends Service {
 
         }
 
+        updateCurrentSong(getBaseContext(), content, true);
+
         player = MediaPlayer.create(getBaseContext(), uri);
 
         player.start();
 
-        ISPLAYING = true;
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                try {
+                    mp.reset();
+                    MediaContent mediaContent = getContent(getBaseContext(),NEXT);
+
+                    mp.setDataSource(mediaContent.getUri());
+                    mp.prepare();
+                    mp.start();
+
+                    updateCurrentSong(getBaseContext(), content, true);
+
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
 
     }
 
+    private void sendBroadc(String curSong, Boolean isPlaing) {
+
+        Intent intent = new Intent("music_update");
+        Preferences.init(getBaseContext());
+        intent.putExtra("currentSong", curSong);
+        intent.putExtra("isPlaying", isPlaing);
+        sendBroadcast(intent);
+    }
 
     private void stopMediaPlayer() {
+
+        updateCurrentSong(getBaseContext(), content, false);
         Log.d("VasyaLog", getClass().getName() + " stopMediaPlayer");
         try {
             player.stop();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ISPLAYING = false;
+
     }
 
     @Override
     public void onCreate() {
-        Log.d("VasyaLog", getClass().getName() + " onCreate");
-        super.onCreate();
 
+        super.onCreate();
+        Log.d("Service_LOG","onCreate");
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("VasyaLog", getClass().getName() + " onBind");
+        Log.d("Service_LOG","onBind");
 
         return new MusicBinder();
     }
@@ -192,7 +220,7 @@ public class MusicService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("VasyaLog", getClass().getName() + " onDestroy");
+        Log.d("Service_LOG","onDestroy");
         super.onDestroy();
         player.stop();
     }

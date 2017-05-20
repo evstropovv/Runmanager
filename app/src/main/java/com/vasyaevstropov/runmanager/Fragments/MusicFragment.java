@@ -1,10 +1,13 @@
 package com.vasyaevstropov.runmanager.Fragments;
 
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,12 +34,13 @@ import java.util.ArrayList;
 
 public class MusicFragment extends Fragment {
 
-    Button btnPlayStop, btnPrev, btnNext;
+    ImageButton btnPlayStop, btnPrev, btnNext;
 
     ArrayAdapter<String> adapter;
     ArrayList<String> arraySongNames;
     ListView musicListView;
     TextView tvSongName;
+    BroadcastReceiver broadcastReceiver;
 
 
     private ArrayList<MediaContent> arrayMediaContent;
@@ -60,13 +65,43 @@ public class MusicFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (broadcastReceiver == null) { //Используется для связи с GPSservice;
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String curSong = intent.getStringExtra("currentSong");
+                    Boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
 
+                    if (isPlaying) {
+                        btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_pause));
+                    }else{
+                        btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_play));
+                    }
+                    tvSongName.setText(curSong);
+                }
+            };
+        }
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("music_update");
+        getActivity().registerReceiver(broadcastReceiver, intentFilter); // Регистрация ресивера (для Сервиса)
+
+    }
 
     private void setPlayerButtons(View view) {
 
-        btnPlayStop = (Button) view.findViewById(R.id.btnPlayStop);
-        btnPrev = (Button)view.findViewById(R.id.btnSongMinus);
-        btnNext = (Button)view.findViewById(R.id.btnSongPlus);
+        btnPlayStop = (ImageButton) view.findViewById(R.id.btnPlayStop);
+        if (MusicService.ISPLAYING){
+            btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_pause));
+        }else{
+            btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_play));
+        }
+
+
+        btnPrev = (ImageButton)view.findViewById(R.id.btnSongMinus);
+        btnNext = (ImageButton)view.findViewById(R.id.btnSongPlus);
         tvSongName = (TextView)view.findViewById(R.id.tvSongName);
 
         btnPlayStop.setOnClickListener(new View.OnClickListener() {

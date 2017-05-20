@@ -11,48 +11,67 @@
         android:layout_height="340dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvSongName"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textAlignment="center" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:orientation="horizontal">
 
-            <Button
-                style="@style/AppTheme.Silver"
-                android:id="@+id/btnSongMinus"
+            <TextView
+                android:id="@+id/tvSongName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:maxLines="3"
+                android:text="123456789"
+                android:textAlignment="center" />
+
+            <ImageButton
+
+                android:id="@+id/btnSongMinus"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="20dp"
+                android:layout_toLeftOf="@+id/btnPlayStop"
+
+                android:background="@android:drawable/ic_media_previous"
                 android:text="last" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btnPlayStop"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.02"
-                android:text="Play" />
+                android:layout_centerVertical="true"
+                android:layout_margin="20dp"
 
-            <Button
+                android:layout_toLeftOf="@+id/btnSongPlus"
+
+                android:background="@android:drawable/ic_media_play" />
+
+            <ImageButton
                 android:id="@+id/btnSongPlus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="next" />
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/btnPlayStop"
+                android:layout_centerVertical="true"
 
-        </LinearLayout>
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@android:drawable/ic_media_next" />
+
+        </RelativeLayout>
 
         <ListView
             android:id="@+id/musicLV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#f9f9f9"
-            />
+            android:background="#f9f9f9" />
 
     </LinearLayout>
 
