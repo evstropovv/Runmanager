@@ -9,17 +9,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadata;
-import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.os.Build;
-import android.support.annotation.BoolRes;
 import android.support.annotation.RequiresApi;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
-import com.vasyaevstropov.runmanager.DB.Preferences;
-import com.vasyaevstropov.runmanager.Fragments.MusicFragment;
 import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
@@ -182,7 +177,7 @@ public class PlayerNotification extends Notification {
                 pendingIntent = PendingIntent.getService(context, 3, action, 0);
                 return pendingIntent;
             case 4:
-                action = new Intent(ctx, MediaPlayerActivity.class);
+                action = new Intent(ctx, MainActivity.class);
                 action.putExtra("Music", true);
                 pendingIntent = PendingIntent.getActivity(context, 4, action, PendingIntent.FLAG_UPDATE_CURRENT);
                 return pendingIntent;

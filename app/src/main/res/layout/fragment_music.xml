@@ -4,14 +4,13 @@
     android:layout_height="wrap_content"
     tools:context="com.vasyaevstropov.runmanager.Fragments.MusicFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="340dp"
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/musicRelative"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:orientation="horizontal">
@@ -25,7 +24,8 @@
                 android:layout_centerVertical="true"
                 android:maxLines="3"
                 android:text="123456789"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/cardview_light_background" />
 
             <ImageButton
 

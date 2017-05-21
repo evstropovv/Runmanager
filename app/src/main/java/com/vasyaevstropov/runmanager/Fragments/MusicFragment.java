@@ -11,6 +11,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
@@ -41,17 +45,18 @@ public class MusicFragment extends Fragment {
     ListView musicListView;
     TextView tvSongName;
     BroadcastReceiver broadcastReceiver;
+    LinearLayout llBottomSheet;
+    BottomSheetBehavior bottomSheetBehavior;
+    RelativeLayout relativeLayout;
+
 
 
     private ArrayList<MediaContent> arrayMediaContent;
 
     @Override
     public void onAttach(Context context) {
-
         Log.d("VasyaLog", getClass().getName() + " onAttach");
-
         super.onAttach(context);
-
     }
 
     @Override
@@ -60,8 +65,13 @@ public class MusicFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_music, container, false);
         setPlayerButtons(view);
+
         doStuff(view);
+
         setTextViewSongName();
+
+        initBottomSheetBehavior();
+
         return view;
     }
 
@@ -103,6 +113,19 @@ public class MusicFragment extends Fragment {
         btnPrev = (ImageButton)view.findViewById(R.id.btnSongMinus);
         btnNext = (ImageButton)view.findViewById(R.id.btnSongPlus);
         tvSongName = (TextView)view.findViewById(R.id.tvSongName);
+        relativeLayout = (RelativeLayout)view.findViewById(R.id.musicRelative);
+        relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){ //Откр
+                    setState(false);
+                }
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){ //закр
+                    setState(true);
+                }
+            }
+        });
+
 
         btnPlayStop.setOnClickListener(new View.OnClickListener() {
 
@@ -188,4 +211,45 @@ public class MusicFragment extends Fragment {
         }
     }
 
+
+    private void initBottomSheetBehavior() {
+        // получение вью нижнего экрана
+        llBottomSheet = (LinearLayout) getActivity().findViewById(R.id.bottom_sheet);
+
+        // настройка поведения нижнего экрана
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+
+        // настройка состояний нижнего экрана
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED); //закрытый
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED); //открытый
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        // настройка максимальной высоты
+        bottomSheetBehavior.setPeekHeight(160);
+
+
+        // настройка возможности скрыть элемент при свайпе вниз
+        bottomSheetBehavior.setHideable(false);
+
+        // настройка колбэков при изменениях
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+    }
+
+    public void setState(Boolean state) {
+        if (!state){
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED); //закрытый
+        }else{
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);  //открытый
+    }
+    }
 }

@@ -58,7 +58,6 @@
             android:value="AIzaSyCWO9bAxj87GA5FPQAiPlcfYDrD2jm2Tpk" />
 
         <activity android:name=".Activities.CardListActivity" />
-        <activity android:name=".Activities.MediaPlayerActivity"></activity>
     </application>
 
 </manifest>

@@ -3,28 +3,25 @@ package com.vasyaevstropov.runmanager;
 import android.Manifest;
 
 import android.animation.ValueAnimator;
+import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -37,10 +34,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -51,20 +49,19 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.vasyaevstropov.runmanager.Activities.CardListActivity;
-import com.vasyaevstropov.runmanager.Activities.MediaPlayerActivity;
 import com.vasyaevstropov.runmanager.Activities.SettingActivity;
-import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Fragments.MusicFragment;
-import com.vasyaevstropov.runmanager.Models.Coordinates;
+import com.vasyaevstropov.runmanager.Interfaces.OnFragmentListener;
 import com.vasyaevstropov.runmanager.Services.GPSservice;
 import com.vasyaevstropov.runmanager.Services.SinhrService;
 
 //Главное окно программы
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, OnFragmentListener {
 
     Button btnStart, btnRecycler;
+    RelativeLayout relativeMap;
     TextView tvTime;
     TextView tvCurrentLocation, tvSpeed;
     SupportMapFragment mapFragment;
@@ -90,20 +87,20 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     btnStart.setText("STOP");
-                    if (intent.getExtras().get("coordinates")!= null){
+                    if (intent.getExtras().get("coordinates") != null) {
                         tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
                         tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
                         Location location = (Location) intent.getExtras().getParcelable("location");
 
                         updateMapPosition(location);
                     }
-                   if (intent.getExtras().get("seconds") != null){
-                       long seconds = intent.getExtras().getLong("seconds");
+                    if (intent.getExtras().get("seconds") != null) {
+                        long seconds = intent.getExtras().getLong("seconds");
 
-                       String sec = String.format("%02d:%02d:%02d",seconds / 3600 ,seconds / 60, seconds % 60);
+                        String sec = String.format("%02d:%02d:%02d", seconds / 3600, seconds / 60, seconds % 60);
 
-                       tvTime.setText(sec);
-                   }
+                        tvTime.setText(sec);
+                    }
                 }
             };
         }
@@ -149,6 +146,8 @@ public class MainActivity extends AppCompatActivity
 
         if (!runtimePermission()) //запрос на GPS
             enableButtons();
+
+
     }
 
     private void initializeBtnTV() {
@@ -175,6 +174,14 @@ public class MainActivity extends AppCompatActivity
         mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map_main);
+        relativeMap = (RelativeLayout)findViewById(R.id.relativeMap);
+        relativeMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottonSheetBehaviorListener(false);
+            }
+        });
+
     }
 
     private void initilalizeMusicFragment() {
@@ -292,9 +299,7 @@ public class MainActivity extends AppCompatActivity
             finish();
 
         } else if (id == R.id.mus_player) {
-            //музыкальный плеер
-            Intent mediaPlayerIntent = new Intent(this, MediaPlayerActivity.class);
-            startActivity(mediaPlayerIntent);
+            bottonSheetBehaviorListener(true);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -347,7 +352,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void updateMapPosition(final Location location){
+    private void updateMapPosition(final Location location) {
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -380,5 +385,12 @@ public class MainActivity extends AppCompatActivity
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
             }
         });
+    }
+
+
+    @Override
+    public void bottonSheetBehaviorListener(Boolean isOpen) {
+        MusicFragment musicFragment = (MusicFragment) getFragmentManager().findFragmentById(R.id.musicFrame);
+        musicFragment.setState(isOpen);
     }
 }
