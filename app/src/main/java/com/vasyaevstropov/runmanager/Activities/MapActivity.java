@@ -59,6 +59,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         Bundle bundle = getIntent().getExtras();
+
         if (bundle != null) {
             this.number = bundle.getInt("number");
         }

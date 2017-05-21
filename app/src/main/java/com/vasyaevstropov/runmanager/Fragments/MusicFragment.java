@@ -2,13 +2,9 @@ package com.vasyaevstropov.runmanager.Fragments;
 
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -19,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,7 +23,6 @@ import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
-import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Services.MusicService;
@@ -217,12 +211,13 @@ public class MusicFragment extends Fragment {
         llBottomSheet = (LinearLayout) getActivity().findViewById(R.id.bottom_sheet);
 
         // настройка поведения нижнего экрана
-        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-
+        try {
+            bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
         // настройка состояний нижнего экрана
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED); //закрытый
-//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED); //открытый
-//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         // настройка максимальной высоты
         bottomSheetBehavior.setPeekHeight(160);

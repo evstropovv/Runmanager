@@ -6,8 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Activities.MapActivity;
 
@@ -42,12 +45,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView tvDayOfWeek, tvDistance, tvDate;
+        public ImageView ivDelete;
 
         public ViewHolder(final View view) {
             super(view);
             tvDayOfWeek = (TextView)view.findViewById(R.id.tvDayOfWeek);
             tvDistance = (TextView)view.findViewById(R.id.tvDistance);
             tvDate = (TextView)view.findViewById(R.id.tvDate);
+            ivDelete = (ImageView)view.findViewById(R.id.ivDelete);
         }
     }
 
@@ -55,6 +60,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_run, parent, false);
         final ViewHolder vh = new ViewHolder(view);
+
+        vh.ivDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int selectPosition = vh.getAdapterPosition() + 1;
+                DBOpenHelper dbOpenHelper = new DBOpenHelper(parent.getContext());
+                Toast.makeText(parent.getContext(),"Delete " + dbOpenHelper.deleteDB(Integer.parseInt(numberRecordList.get(selectPosition))), Toast.LENGTH_LONG).show();
+                swap(selectPosition-1);
+
+            }
+        });
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +80,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 v.getContext().startActivity(intent);
             }
         });
+
+
         return vh;
     }
 
@@ -78,5 +97,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public int getItemCount() {
         return distanceList.size();
+    }
+
+    private void swap(int number){
+        dayOfWeekList.remove(number);
+        dateList.remove(number);
+        distanceList.remove(number);
+        numberRecordList.remove(number);
+
+        notifyDataSetChanged();
     }
 }

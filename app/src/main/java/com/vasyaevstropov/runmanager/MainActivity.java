@@ -60,10 +60,10 @@ import com.vasyaevstropov.runmanager.Services.SinhrService;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, OnFragmentListener {
 
-    Button btnStart, btnRecycler;
+    Button btnStart;
     RelativeLayout relativeMap;
     TextView tvTime;
-    TextView tvCurrentLocation, tvSpeed;
+    TextView tvSpeed;
     SupportMapFragment mapFragment;
     double lat1 = 0;
     double long1 = 0;
@@ -72,10 +72,8 @@ public class MainActivity extends AppCompatActivity
     public static boolean startGpsService = false;
     private BroadcastReceiver broadcastReceiver;
 
-
     MusicFragment musicFragment;
     android.app.FragmentTransaction fragmTrans;
-
 
     @Override
     protected void onResume() {
@@ -86,15 +84,18 @@ public class MainActivity extends AppCompatActivity
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    btnStart.setText("STOP");
+                    btnStart.setText(getResources().getString(R.string.stop));
                     if (intent.getExtras().get("coordinates") != null) {
-                        tvCurrentLocation.append("\n" + intent.getExtras().get("coordinates"));
-                        tvSpeed.setText(String.valueOf(intent.getExtras().get("speed")) + " km/h");
+                        String speed = String.format("%.0f", intent.getExtras().get("speed"));
+
+                        tvSpeed.setText(speed + getResources().getString(R.string.kmh));
+
                         Location location = (Location) intent.getExtras().getParcelable("location");
 
                         updateMapPosition(location);
                     }
                     if (intent.getExtras().get("seconds") != null) {
+
                         long seconds = intent.getExtras().getLong("seconds");
 
                         String sec = String.format("%02d:%02d:%02d", seconds / 3600, seconds / 60, seconds % 60);
@@ -118,7 +119,6 @@ public class MainActivity extends AppCompatActivity
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver); //удаляем броадкаст
         }
-
     }
 
     @Override
@@ -142,30 +142,18 @@ public class MainActivity extends AppCompatActivity
         initializeBtnTV();
 
         initializeMapFragment();
-        initilalizeMusicFragment();
+
 
         if (!runtimePermission()) //запрос на GPS
+        {
             enableButtons();
-
+            initilalizeMusicFragment();
+        }
 
     }
 
     private void initializeBtnTV() {
         btnStart = (Button) findViewById(R.id.btnStart);
-        btnRecycler = (Button) findViewById(R.id.btnRecycler);
-        btnRecycler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), CardListActivity.class);
-                startActivity(intent);
-
-                Intent intent1 = new Intent(v.getContext(), SinhrService.class);
-                startService(intent1);
-
-            }
-        });
-
-        tvCurrentLocation = (TextView) findViewById(R.id.tvCoordinates);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
     }
@@ -207,11 +195,11 @@ public class MainActivity extends AppCompatActivity
                 if (!MainActivity.startGpsService) {
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     startService(intent);
-                    btnStart.setText("STOP");
+                    btnStart.setText(getResources().getString(R.string.stop));
                 } else {
                     Intent intent = new Intent(getApplicationContext(), GPSservice.class);
                     stopService(intent);
-                    btnStart.setText("START");
+                    btnStart.setText(getResources().getString(R.string.start));
                 }
             }
         });
@@ -291,6 +279,9 @@ public class MainActivity extends AppCompatActivity
 
             Intent intent = new Intent(MainActivity.this, CardListActivity.class);
             startActivity(intent);
+
+            Intent intent1 = new Intent(MainActivity.this, SinhrService.class);
+            startService(intent1);
 
         } else if (id == R.id.settings) {
             //настройки

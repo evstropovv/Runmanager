@@ -9,7 +9,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
@@ -17,7 +16,6 @@ import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.Notification.PlayerNotification;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class MusicService extends Service {
@@ -30,11 +28,10 @@ public class MusicService extends Service {
 
     Uri uri;
     MediaPlayer player;
-    MediaContent content;
     private final int PREV = -1;
     private final int PLAY = 0;
     private final int NEXT = 1;
-    private MediaContent mediaContent;
+    private MediaContent content;
 
 
     @Override
@@ -51,11 +48,9 @@ public class MusicService extends Service {
             if (intent.getAction().contains(SELECT_MEDIA)) {
                 Log.d("Service_LOG","SELECT_MEDIA");
 
-                Toast.makeText(getBaseContext(), "INTENT HAS PARCELABLE", Toast.LENGTH_LONG).show();
+                content = intent.getExtras().getParcelable(MediaContent.currentSong);
 
-                mediaContent = intent.getExtras().getParcelable(MediaContent.currentSong);
-
-                uri = Uri.parse(mediaContent.getUri());
+                uri = Uri.parse(content.getUri());
 
                 playNewMedia(uri);
 
@@ -64,14 +59,10 @@ public class MusicService extends Service {
 
             if (intent.getAction().contains(PLAYMEDIA)) {
                 Log.d("Service_LOG","PLAYMEDIA");
-                try {
+
                     uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
                     playMedia(uri);
 
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-
-                }
             }
 
 
@@ -115,7 +106,7 @@ public class MusicService extends Service {
 
     private void updateCurrentSong(Context baseContext, MediaContent content, boolean b) {
         new PlayerNotification(baseContext, content, b);
-        sendBroadc(mediaContent.getArtist() + "\n" + mediaContent.getTitle(), b);
+        sendBroadc(content.getArtist() + "\n" + content.getTitle(), b);
         ISPLAYING = b;
     }
 
@@ -231,5 +222,4 @@ public class MusicService extends Service {
             return MusicService.this;
         }
     }
-
 }

@@ -65,15 +65,16 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        db.close();
         return id;
     }
 
-    public ArrayList<HashMap<String,String>> getSpeedTable() { //получаем последний ИД записанный в Segmenttable
+    public ArrayList<HashMap<String, String>> getSpeedTable() { //получаем последний ИД записанный в Segmenttable
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
         HashMap<String, String> map;
 
-//        try {
+        try {
             Cursor c = db.rawQuery("SELECT * FROM " + Coordinates.TABLE_NAME_SPEEDTABLE, null);
             if (c.moveToFirst()) {
                 int colId = c.getColumnIndex(Coordinates.COLUMN_ID);
@@ -98,9 +99,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 } while (c.moveToNext());
             }
             c.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        db.close();
 
         return arrayList;
     }
@@ -116,6 +118,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             db.insert(Coordinates.TABLE_NAME_SEGMENT, null, cv);
         } catch (Exception e) {
         }
+        db.close();
     }
 
     public int getLastNumberRecord(SQLiteDatabase db) { //получаем последний ИД записанный в Segmenttable
@@ -153,7 +156,26 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
         c.close();
+        db.close();
         return rectOptions;
+    }
+
+    public Integer deleteDB(Integer numb) {
+        SQLiteDatabase db = getWritableDatabase();
+        int i = 0;
+        int n = 0;
+
+        try {
+            i = db.delete(Coordinates.TABLE_NAME_SPEEDTABLE, Coordinates.COLUMN_NUMB_RECORD + "=" + numb, null);
+        } catch (Exception e) {e.printStackTrace();}
+
+        try {
+            n = db.delete(Coordinates.TABLE_NAME_SEGMENT, Coordinates.COLUMN_ID + "=" + numb, null);
+        } catch (Exception e) {e.printStackTrace();}
+
+        db.close();
+
+        return i + n;
     }
 
     public ArrayList<HashMap<String, String>> getTimeSpeed(Integer numb) {
@@ -203,39 +225,40 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             c.close();
         } catch (Exception e) {
         }
+        db.close();
         return arr;
     }
 
     public ArrayList<ArrayList<String>> getListOfRuns() { //Вытягиваем с базы список пробежек.
 
-            SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Integer> idList = new ArrayList<>();
+        ArrayList<String> dayOfWeekList = new ArrayList<>();
+        ArrayList<String> dateList = new ArrayList<>();
+        ArrayList<String> distanceList = new ArrayList<>();
+        ArrayList<String> numberRecordList = new ArrayList<>();
+        ArrayList<ArrayList<String>> listOfRuns = new ArrayList<>();
 
-            ArrayList<String> dayOfWeekList = new ArrayList<>();
-            ArrayList<String> dateList = new ArrayList<>();
-            ArrayList<String> distanceList = new ArrayList<>();
-            ArrayList<String> numberRecordList = new ArrayList<>();
-            ArrayList<ArrayList<String>> listOfRuns = new ArrayList<>();
+        try {
+            Cursor c2 = db.query(Coordinates.TABLE_NAME_SEGMENT, null, null, null, null, null, null);
+            if (c2.moveToFirst()) {
+                // определяем номера столбцов по имени в выборке
+                int id = c2.getColumnIndex(Coordinates.COLUMN_ID);
+                int dayofweek = c2.getColumnIndex(Coordinates.COLUMN_DAYOFWEEK);
+                int date = c2.getColumnIndex(Coordinates.COLUMN_DATE);
+                int distance = c2.getColumnIndex(Coordinates.COLUMN_DISTANCE);
 
-            try {
-                Cursor c2 = db.query(Coordinates.TABLE_NAME_SEGMENT, null, null, null, null, null, null);
-                if (c2.moveToFirst()) {
-                    // определяем номера столбцов по имени в выборке
-                    int id = c2.getColumnIndex(Coordinates.COLUMN_ID);
-                    int dayofweek = c2.getColumnIndex(Coordinates.COLUMN_DAYOFWEEK);
-                    int date = c2.getColumnIndex(Coordinates.COLUMN_DATE);
-                    int distance = c2.getColumnIndex(Coordinates.COLUMN_DISTANCE);
+                do {
 
-                    do {
-                        numberRecordList.add(c2.getString(id));
+                    numberRecordList.add(c2.getString(id));
+                    dayOfWeekList.add(c2.getString(dayofweek));
+                    dateList.add(c2.getString(date));
+                    distanceList.add(c2.getString(distance));
 
-                        dayOfWeekList.add(c2.getString(dayofweek));
-                        dateList.add(c2.getString(date));
-                        distanceList.add(c2.getString(distance));
+                } while (c2.moveToNext());
 
-                    } while (c2.moveToNext());
-
-                    c2.close();
-                }
+                c2.close();
+            }
             db.close();
 
             listOfRuns.add(dayOfWeekList);
@@ -248,6 +271,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             e.printStackTrace();
 
         }
+        db.close();
         return listOfRuns;
     }
 

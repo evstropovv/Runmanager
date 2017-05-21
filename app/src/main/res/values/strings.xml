@@ -3,6 +3,9 @@
     <string name="settings">Настройки</string>
     <string name="music_player">Музыкальный плеер</string>
     <string name="run_history">История пробежек</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="kmh"> км/ч</string>
 
 
     <string name="app_name">Runmanager</string>

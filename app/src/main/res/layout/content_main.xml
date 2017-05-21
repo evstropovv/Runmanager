@@ -37,25 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btnStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="18dp"
-                android:text="START"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tvSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="66dp"
-                android:text="0 km/h"
-                android:textAlignment="center"
-                android:textSize="25sp" />
-
             <TextView
                 android:id="@+id/tvTime"
                 android:layout_width="wrap_content"
@@ -69,24 +50,26 @@
                 android:textStyle="normal|bold" />
 
             <TextView
-                android:id="@+id/tvCoordinates"
+                android:id="@+id/tvSpeed"
+                android:layout_below="@+id/tvTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/btnRecycler"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="44dp"
-                android:maxLines="3"
-                android:text="coordinates"
-                android:textAlignment="center" />
+                android:layout_marginTop="66dp"
+                android:text="0 km/h"
+                android:textAlignment="center"
+                android:textSize="25sp" />
 
             <Button
-                android:id="@+id/btnRecycler"
+                android:layout_below="@id/tvSpeed"
+                android:id="@+id/btnStart"
+                android:layout_marginTop="150dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="78dp"
-                android:text="RECYCLER" />
+                android:layout_marginBottom="18dp"
+                android:text="START"
+                android:textSize="20sp" />
 
 
         </RelativeLayout>

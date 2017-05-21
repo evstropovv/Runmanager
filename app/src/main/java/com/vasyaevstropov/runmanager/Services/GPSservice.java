@@ -68,6 +68,7 @@ public class GPSservice extends Service {
         //подключаем к БД
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
         lastNumberRecord = dbOpenHelper.getLastNumberRecord(db);
+
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -145,6 +146,7 @@ public class GPSservice extends Service {
             locationManager.removeUpdates(listener) ;
         }
         writeToSegmentTable();
+        timer.onFinish();
         timer.cancel();
         MainActivity.startGpsService = false;
     }
@@ -174,7 +176,6 @@ public class GPSservice extends Service {
         timer = new CountDownTimer(1000000000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                Toast.makeText(getApplicationContext(), "TIMER STARTED", Toast.LENGTH_LONG).show();
 
                 seconds = 1000000 - millisUntilFinished / 1000;
                 Intent i = new Intent("timer_update");
