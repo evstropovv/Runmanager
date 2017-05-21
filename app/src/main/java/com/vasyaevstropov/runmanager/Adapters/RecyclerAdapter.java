@@ -1,7 +1,9 @@
 package com.vasyaevstropov.runmanager.Adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,7 @@ import java.util.Locale;
 //Используется для отображения списка
 //сохраненных пробежек
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>  {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private ArrayList<String> dayOfWeekList;
     Context context;
@@ -32,7 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private ArrayList<String> numberRecordList;
 
 
-    public RecyclerAdapter(Context ctx, ArrayList<String> dayOfWeekList, ArrayList<String> dateList, ArrayList<String> distanceList, ArrayList<String> numberRecordList){
+    public RecyclerAdapter(Context ctx, ArrayList<String> dayOfWeekList, ArrayList<String> dateList, ArrayList<String> distanceList, ArrayList<String> numberRecordList) {
         this.dayOfWeekList = dayOfWeekList;
         this.context = ctx;
         dayOfWeek = ctx.getResources().getStringArray(R.array.day_of_week);
@@ -42,17 +44,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvDayOfWeek, tvDistance, tvDate;
         public ImageView ivDelete;
 
         public ViewHolder(final View view) {
             super(view);
-            tvDayOfWeek = (TextView)view.findViewById(R.id.tvDayOfWeek);
-            tvDistance = (TextView)view.findViewById(R.id.tvDistance);
-            tvDate = (TextView)view.findViewById(R.id.tvDate);
-            ivDelete = (ImageView)view.findViewById(R.id.ivDelete);
+            tvDayOfWeek = (TextView) view.findViewById(R.id.tvDayOfWeek);
+            tvDistance = (TextView) view.findViewById(R.id.tvDistance);
+            tvDate = (TextView) view.findViewById(R.id.tvDate);
+            ivDelete = (ImageView) view.findViewById(R.id.ivDelete);
         }
     }
 
@@ -64,10 +66,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         vh.ivDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int selectPosition = vh.getAdapterPosition() + 1;
-                DBOpenHelper dbOpenHelper = new DBOpenHelper(parent.getContext());
-                Toast.makeText(parent.getContext(),"Delete " + dbOpenHelper.deleteDB(Integer.parseInt(numberRecordList.get(selectPosition))), Toast.LENGTH_LONG).show();
-                swap(selectPosition-1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
+// Add the buttons
+                builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        int selectPosition = vh.getAdapterPosition() + 1;
+                        DBOpenHelper dbOpenHelper = new DBOpenHelper(parent.getContext());
+                        Toast.makeText(parent.getContext(), "Delete " + dbOpenHelper.deleteDB(Integer.parseInt(numberRecordList.get(selectPosition - 1))), Toast.LENGTH_SHORT).show();
+                        swap(selectPosition - 1);
+                    }
+                });
+                builder.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                }).show();
+// Set other dialog properties
+
+
+// Create the AlertDialog
 
             }
         });
@@ -76,7 +94,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MapActivity.class);
-                intent.putExtra("number", vh.getAdapterPosition()+1);
+                intent.putExtra("number", vh.getAdapterPosition() + 1);
                 v.getContext().startActivity(intent);
             }
         });
@@ -87,10 +105,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String formatedDistance = String.format(Locale.US,"%.2f", Double.parseDouble(distanceList.get(position))); //уменьшаем дистанцию до 2ух знаков после запятой.
+        String formatedDistance = String.format(Locale.US, "%.2f", Double.parseDouble(distanceList.get(position))); //уменьшаем дистанцию до 2ух знаков после запятой.
 
         holder.tvDistance.setText(formatedDistance + context.getResources().getString(R.string.km));
-        holder.tvDayOfWeek.setText(dayOfWeek[Integer.parseInt(dayOfWeekList.get(position))-1]);
+        holder.tvDayOfWeek.setText(dayOfWeek[Integer.parseInt(dayOfWeekList.get(position)) - 1]);
         holder.tvDate.setText(dateList.get(position));
     }
 
@@ -99,7 +117,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return distanceList.size();
     }
 
-    private void swap(int number){
+    private void swap(int number) {
         dayOfWeekList.remove(number);
         dateList.remove(number);
         distanceList.remove(number);
