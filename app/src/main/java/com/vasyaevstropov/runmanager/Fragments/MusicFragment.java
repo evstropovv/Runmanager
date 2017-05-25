@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Services.MusicService;
@@ -38,10 +41,15 @@ public class MusicFragment extends Fragment {
     ArrayList<String> arraySongNames;
     ListView musicListView;
     TextView tvSongName;
-    BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver broadcastReceiver;
     LinearLayout llBottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
     RelativeLayout relativeLayout;
+    Button btnStart;
+    RelativeLayout relativeMap;
+    TextView tvTime;
+    TextView tvSpeed;
+    MainActivity ma;
 
 
 
@@ -58,6 +66,9 @@ public class MusicFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_music, container, false);
+
+        ma = new MainActivity();
+
         setPlayerButtons(view);
 
         doStuff(view);
@@ -76,19 +87,49 @@ public class MusicFragment extends Fragment {
             broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    String curSong = intent.getStringExtra("currentSong");
-                    Boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
 
-                    if (isPlaying) {
-                        btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_pause));
-                    }else{
-                        btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_play));
+                    if (intent.getExtras().get("currentSong")!=null) {
+                        String curSong = intent.getStringExtra("currentSong");
+                        Boolean isPlaying = intent.getBooleanExtra("isPlaying", false);
+
+                        if (isPlaying) {
+                            btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_pause));
+                        } else {
+                            btnPlayStop.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_media_play));
+                        }
+                        tvSongName.setText(curSong);
                     }
-                    tvSongName.setText(curSong);
+
+
+
+                    if (intent.getExtras().get("coordinates") != null) {
+
+                        btnStart.setText(getResources().getString(R.string.stop));
+
+                        String speed = String.format("%.0f", intent.getExtras().get("speed"));
+
+                        tvSpeed.setText(speed + getResources().getString(R.string.kmh));
+
+                        Location location = (Location) intent.getExtras().getParcelable("location");
+
+                        ma.updateMapPosition(location);
+                    }
+                    if (intent.getExtras().get("seconds") != null) {
+
+                        long seconds = intent.getExtras().getLong("seconds");
+
+                        String sec = String.format("%02d:%02d:%02d", seconds / 3600, seconds / 60, seconds % 60);
+
+                        tvTime.setText(sec);
+                    }
+
+
                 }
             };
         }
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("location_update");
+        intentFilter.addAction("timer_update");
         intentFilter.addAction("music_update");
         getActivity().registerReceiver(broadcastReceiver, intentFilter); // Регистрация ресивера (для Сервиса)
 
@@ -179,6 +220,10 @@ public class MusicFragment extends Fragment {
                 setTextViewSongName();
             }
         });
+
+        btnStart = (Button) getActivity().findViewById(R.id.btnStart);
+        tvSpeed = (TextView) getActivity().findViewById(R.id.tvSpeed);
+        tvTime = (TextView) getActivity().findViewById(R.id.tvTime);
     }
 
     private void fillArrayMediaContent(){
@@ -240,11 +285,20 @@ public class MusicFragment extends Fragment {
         });
     }
 
+
     public void setState(Boolean state) {
         if (!state){
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED); //закрытый
         }else{
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);  //открытый
     }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (broadcastReceiver !=null){
+            getActivity().unregisterReceiver(broadcastReceiver);
+        }
     }
 }

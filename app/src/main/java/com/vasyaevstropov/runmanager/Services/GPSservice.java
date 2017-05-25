@@ -141,7 +141,7 @@ public class GPSservice extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+
         if (locationManager!=null){
             locationManager.removeUpdates(listener) ;
         }
@@ -149,6 +149,8 @@ public class GPSservice extends Service {
         timer.onFinish();
         timer.cancel();
         MainActivity.startGpsService = false;
+
+        super.onDestroy();
     }
 
     private void writeToSegmentTable() {

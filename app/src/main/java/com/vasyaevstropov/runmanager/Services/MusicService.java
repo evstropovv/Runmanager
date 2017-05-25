@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
@@ -59,12 +60,14 @@ public class MusicService extends Service {
 
             if (intent.getAction().contains(PLAYMEDIA)) {
                 Log.d("Service_LOG","PLAYMEDIA");
-
+                try {
                     uri = Uri.parse(getContent(getBaseContext(), PLAY).getUri());
                     playMedia(uri);
-
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(getBaseContext(), "Музыки не обнаружено ! :(", Toast.LENGTH_LONG).show();
+                }
             }
-
 
             if (intent.getAction().contains(PREVMEDIA)) {
                 Log.d("Service_LOG","PREVMEDIA");
@@ -96,10 +99,16 @@ public class MusicService extends Service {
             int currentMedia = Preferences.getLastMusic() + numb;
             content = storage.getMusicList().get(currentMedia);
             Preferences.setLastMusic(currentMedia);
+
         } catch (Exception e) {
-            content = storage.getMusicList().get(Preferences.getLastMusic());
+            if (storage.getMusicList().size()!= 0){
+                content = storage.getMusicList().get(Preferences.getLastMusic());
+            }
         }
-        updateCurrentSong(baseContext, content, true);
+
+        if (storage.getMusicList().size()!= 0) {
+            updateCurrentSong(baseContext, content, true);
+        }
 
         return content;
     }

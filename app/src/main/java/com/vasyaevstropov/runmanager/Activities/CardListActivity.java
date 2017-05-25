@@ -39,8 +39,6 @@ public class CardListActivity extends AppCompatActivity {
         Preferences.init(this);
         setTheme(Preferences.getStyle());
 
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 

@@ -133,7 +133,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         googleMap.addPolyline(dbOpenHelper.readDB(number)); //Добавляем линию движения
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lat1, long1)).title(getResources().getString(R.string.point1))); //маркер 1й точки
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, long2)).title(getResources().getString(R.string.point2))); //маркер 2й точки
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((lat1 + lat2) / 2, (long1 + long2) / 2), 19.5f), 50, null); //приближение
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((lat1 + lat2) / 2, (long1 + long2) / 2), 17.5f), 50, null); //приближение
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }
 

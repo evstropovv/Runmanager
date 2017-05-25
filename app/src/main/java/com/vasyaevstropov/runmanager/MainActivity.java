@@ -80,35 +80,36 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
 
-        if (broadcastReceiver == null) { //Используется для связи с GPSservice;
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    btnStart.setText(getResources().getString(R.string.stop));
-                    if (intent.getExtras().get("coordinates") != null) {
-                        String speed = String.format("%.0f", intent.getExtras().get("speed"));
-
-                        tvSpeed.setText(speed + getResources().getString(R.string.kmh));
-
-                        Location location = (Location) intent.getExtras().getParcelable("location");
-
-                        updateMapPosition(location);
-                    }
-                    if (intent.getExtras().get("seconds") != null) {
-
-                        long seconds = intent.getExtras().getLong("seconds");
-
-                        String sec = String.format("%02d:%02d:%02d", seconds / 3600, seconds / 60, seconds % 60);
-
-                        tvTime.setText(sec);
-                    }
-                }
-            };
-        }
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("location_update");
-        intentFilter.addAction("timer_update");
-        registerReceiver(broadcastReceiver, intentFilter); // Регистрация ресивера (для Сервиса)
+//        if (broadcastReceiver == null) { //Используется для связи с GPSservice;
+//            broadcastReceiver = new BroadcastReceiver() {
+//                @Override
+//                public void onReceive(Context context, Intent intent) {
+//                    btnStart.setText(getResources().getString(R.string.stop));
+//                    if (intent.getExtras().get("coordinates") != null) {
+//                        String speed = String.format("%.0f", intent.getExtras().get("speed"));
+//
+//                        tvSpeed.setText(speed + getResources().getString(R.string.kmh));
+//
+//                        Location location = (Location) intent.getExtras().getParcelable("location");
+//
+//                        updateMapPosition(location);
+//                    }
+//                    if (intent.getExtras().get("seconds") != null) {
+//
+//                        long seconds = intent.getExtras().getLong("seconds");
+//
+//                        String sec = String.format("%02d:%02d:%02d", seconds / 3600, seconds / 60, seconds % 60);
+//
+//                        tvTime.setText(sec);
+//                    }
+//                }
+//            };
+//        }
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("location_update");
+//        intentFilter.addAction("timer_update");
+//        intentFilter.addAction("music_update");
+//        registerReceiver(broadcastReceiver, intentFilter); // Регистрация ресивера (для Сервиса)
 
     }
 
@@ -139,15 +140,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        initializeBtnTV();
-
-        initializeMapFragment();
-
 
         if (!runtimePermission()) //запрос на GPS
         {
-            enableButtons();
-            initilalizeMusicFragment();
+
         }
 
     }
@@ -187,8 +183,11 @@ public class MainActivity extends AppCompatActivity
 
 
     private void enableButtons() {
-        mapFragment.getMapAsync(this);
+        initializeBtnTV();
+        initializeMapFragment();
+        initilalizeMusicFragment();
 
+        mapFragment.getMapAsync(this);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +217,11 @@ public class MainActivity extends AppCompatActivity
                             Manifest.permission.READ_EXTERNAL_STORAGE},
                     100);
             return true;
+        }else {
+            enableButtons();
         }
+
+
         return false;
     }
 
@@ -343,7 +346,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void updateMapPosition(final Location location) {
+    public void updateMapPosition(final Location location) {
 
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override

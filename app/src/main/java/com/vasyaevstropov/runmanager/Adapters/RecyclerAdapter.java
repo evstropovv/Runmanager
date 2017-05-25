@@ -27,7 +27,7 @@ import java.util.Locale;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private ArrayList<String> dayOfWeekList;
-    Context context;
+    private Context context;
     private String[] dayOfWeek;
     private ArrayList<String> dateList;
     private ArrayList<String> distanceList;
@@ -60,17 +60,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_run, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_run, parent, false);
         final ViewHolder vh = new ViewHolder(view);
 
         vh.ivDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
-// Add the buttons
+
+                // Add the buttons
+
+                builder.setMessage("Удалить проежку ?");
                 builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         int selectPosition = vh.getAdapterPosition() + 1;
                         DBOpenHelper dbOpenHelper = new DBOpenHelper(parent.getContext());
                         Toast.makeText(parent.getContext(), "Delete " + dbOpenHelper.deleteDB(Integer.parseInt(numberRecordList.get(selectPosition - 1))), Toast.LENGTH_SHORT).show();
@@ -82,10 +84,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                         // User cancelled the dialog
                     }
                 }).show();
-// Set other dialog properties
-
-
-// Create the AlertDialog
+                // Set other dialog properties
+                // Create the AlertDialog
 
             }
         });
@@ -95,7 +95,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MapActivity.class);
                 intent.putExtra("number", vh.getAdapterPosition() + 1);
-                v.getContext().startActivity(intent);
+                try {
+                    v.getContext().startActivity(intent);
+                }catch (Exception e){
+                    Toast.makeText(view.getContext(),"Данных для показа не обнаружено!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
