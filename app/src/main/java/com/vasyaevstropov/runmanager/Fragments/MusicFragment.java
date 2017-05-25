@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
+import com.vasyaevstropov.runmanager.Interfaces.OnFragmentListener;
 import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
@@ -49,7 +50,8 @@ public class MusicFragment extends Fragment {
     RelativeLayout relativeMap;
     TextView tvTime;
     TextView tvSpeed;
-    MainActivity ma;
+
+    OnFragmentListener fragmentListener;
 
 
 
@@ -67,7 +69,7 @@ public class MusicFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_music, container, false);
 
-        ma = new MainActivity();
+        fragmentListener = (OnFragmentListener)getActivity();
 
         setPlayerButtons(view);
 
@@ -112,7 +114,8 @@ public class MusicFragment extends Fragment {
 
                         Location location = (Location) intent.getExtras().getParcelable("location");
 
-                        ma.updateMapPosition(location);
+                        fragmentListener.updateLocation(location);
+
                     }
                     if (intent.getExtras().get("seconds") != null) {
 

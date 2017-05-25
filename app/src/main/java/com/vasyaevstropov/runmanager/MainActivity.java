@@ -348,6 +348,18 @@ public class MainActivity extends AppCompatActivity
 
     public void updateMapPosition(final Location location) {
 
+
+    }
+
+
+    @Override
+    public void bottonSheetBehaviorListener(Boolean isOpen) {
+        MusicFragment musicFragment = (MusicFragment) getFragmentManager().findFragmentById(R.id.musicFrame);
+        musicFragment.setState(isOpen);
+    }
+
+    @Override
+    public void updateLocation(final Location location) {
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -379,12 +391,5 @@ public class MainActivity extends AppCompatActivity
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
             }
         });
-    }
-
-
-    @Override
-    public void bottonSheetBehaviorListener(Boolean isOpen) {
-        MusicFragment musicFragment = (MusicFragment) getFragmentManager().findFragmentById(R.id.musicFrame);
-        musicFragment.setState(isOpen);
     }
 }
