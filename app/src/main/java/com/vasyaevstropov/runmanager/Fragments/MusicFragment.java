@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 import com.vasyaevstropov.runmanager.DB.MusicStorage;
 import com.vasyaevstropov.runmanager.DB.Preferences;
 import com.vasyaevstropov.runmanager.Interfaces.OnFragmentListener;
-import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.Models.MediaContent;
 import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Services.MusicService;
@@ -275,17 +273,6 @@ public class MusicFragment extends Fragment {
         bottomSheetBehavior.setHideable(false);
 
         // настройка колбэков при изменениях
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
     }
 
 

@@ -294,6 +294,14 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.mus_player) {
             bottonSheetBehaviorListener(true);
+        }else if (id ==R.id.chat){
+
+            Intent chatIntent = new Intent(this, ChatActivity.class);
+
+            startActivity(chatIntent);
+            
+            finish();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

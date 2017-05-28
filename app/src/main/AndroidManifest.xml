@@ -41,14 +41,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activities.MapActivity" />
 
-        <service android:name=".Services.GPSservice" > </service>
-
+        <service android:name=".Services.GPSservice"></service>
         <service android:name=".Services.MusicService">
             <intent-filter>
-                <action android:name="com.vasyaevstropov.runmanager.TOGGLE_PLAYBACK"/>
-                <action android:name="com.vasyaevstropov.runmanager.PREV"/>
-                <action android:name="com.vasyaevstropov.runmanager.NEXT"/>
-                <action android:name="com.vasyaevstropov.runmanager.SELECT_MEDIA"/>
+                <action android:name="com.vasyaevstropov.runmanager.TOGGLE_PLAYBACK" />
+                <action android:name="com.vasyaevstropov.runmanager.PREV" />
+                <action android:name="com.vasyaevstropov.runmanager.NEXT" />
+                <action android:name="com.vasyaevstropov.runmanager.SELECT_MEDIA" />
             </intent-filter>
         </service>
         <service android:name=".Services.SinhrService" />
@@ -58,6 +57,10 @@
             android:value="AIzaSyCWO9bAxj87GA5FPQAiPlcfYDrD2jm2Tpk" />
 
         <activity android:name=".Activities.CardListActivity" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
