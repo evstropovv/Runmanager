@@ -24,7 +24,7 @@ import java.util.Locale;
 //Используется для отображения списка
 //сохраненных пробежек
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
     private ArrayList<String> dayOfWeekList;
     private Context context;
@@ -32,7 +32,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private ArrayList<String> dateList;
     private ArrayList<String> distanceList;
     private ArrayList<String> numberRecordList;
-
+    OnItemClickListener listener;
 
     public RecyclerAdapter(Context ctx, ArrayList<String> dayOfWeekList, ArrayList<String> dateList, ArrayList<String> distanceList, ArrayList<String> numberRecordList) {
         this.dayOfWeekList = dayOfWeekList;
@@ -42,6 +42,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         this.distanceList = distanceList;
         this.numberRecordList = numberRecordList;
     }
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -104,16 +105,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         });
 
 
+
+
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         String formatedDistance = String.format(Locale.US, "%.2f", Double.parseDouble(distanceList.get(position))); //уменьшаем дистанцию до 2ух знаков после запятой.
 
         holder.tvDistance.setText(formatedDistance + context.getResources().getString(R.string.km));
         holder.tvDayOfWeek.setText(dayOfWeek[Integer.parseInt(dayOfWeekList.get(position)) - 1]);
         holder.tvDate.setText(dateList.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener!= null){
+                    listener.onClick(position);
+                }
+            }
+        });
     }
 
     @Override
@@ -129,4 +140,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         notifyDataSetChanged();
     }
+    public void setOnClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+
+    public interface OnItemClickListener{
+        public void onClick(int position);
+    }
+
+
 }

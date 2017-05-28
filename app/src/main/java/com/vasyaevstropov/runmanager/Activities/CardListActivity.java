@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.vasyaevstropov.runmanager.Adapters.RecyclerAdapter;
 import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
@@ -55,7 +56,8 @@ public class CardListActivity extends AppCompatActivity {
         recyclerLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(recyclerLayoutManager);
         recyclerAdapter = new RecyclerAdapter(this, dayOfWeekList, dateList, distanceList, numberRecordList);
-        recyclerView.setAdapter(recyclerAdapter);
+                recyclerView.setAdapter(recyclerAdapter);
+
 
     }
 
