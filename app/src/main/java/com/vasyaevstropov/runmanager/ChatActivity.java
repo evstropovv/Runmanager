@@ -24,6 +24,8 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.vasyaevstropov.runmanager.Models.ChatMessage;
 
@@ -51,20 +53,20 @@ public class ChatActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (edit.getText().toString() ==""){
+
                     FirebaseDatabase.getInstance().getReference().push().setValue(new ChatMessage(edit.getText().toString(),
                             FirebaseAuth.getInstance().getCurrentUser().getEmail()));
                     edit.setText("");
-                } else {
-                    Snackbar.make(activity_chat, "Введите сообщение", Snackbar.LENGTH_SHORT).show();
-                }
+
+                Snackbar.make(activity_chat, "Введите сообщение", Snackbar.LENGTH_SHORT).show();
+
             }
         });
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_REQUEST_CODE);
         } else {
-            Snackbar.make(activity_chat, "Welcome" + FirebaseAuth.getInstance().getCurrentUser().getEmail(), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(activity_chat, "Welcome " + FirebaseAuth.getInstance().getCurrentUser().getEmail(), Snackbar.LENGTH_SHORT).show();
 
         }
         displayChatMessage();
@@ -94,7 +96,8 @@ public class ChatActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Toast.makeText(getBaseContext(),position+"", Toast.LENGTH_SHORT).show();
-                FirebaseDatabase.getInstance().getReference().child(String.valueOf(position)).removeValue();
+                DatabaseReference db_node = FirebaseDatabase.getInstance().getReference().child("runmanager-163619");
+                db_node.removeValue();
 
                 return true;
             }
