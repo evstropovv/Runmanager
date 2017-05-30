@@ -70,6 +70,13 @@ public class CardListActivity extends AppCompatActivity {
         }
 
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId()==android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void setListOfRuns(){
 
@@ -82,12 +89,5 @@ public class CardListActivity extends AppCompatActivity {
         numberRecordList = listOfRuns.get(3);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==android.R.id.home){
-            onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
 }

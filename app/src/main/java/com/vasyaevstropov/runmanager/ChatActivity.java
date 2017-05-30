@@ -33,19 +33,20 @@ import java.text.SimpleDateFormat;
 
 public class ChatActivity extends AppCompatActivity {
 
-    RecyclerView recyclerView;
     private static int SIGN_IN_REQUEST_CODE = 1;
     private FirebaseListAdapter<ChatMessage> adapter;
     private EditText edit;
     private RelativeLayout activity_chat;
     private ListView listOfMessage;
+    private  Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initToolBar();
+
+
         activity_chat = (RelativeLayout) findViewById(R.id.chatActivity);
         edit = (EditText) findViewById(R.id.editTextMessage);
         listOfMessage = (ListView) findViewById(R.id.listViewChat);
@@ -96,7 +97,7 @@ public class ChatActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Toast.makeText(getBaseContext(),position+"", Toast.LENGTH_SHORT).show();
-                DatabaseReference db_node = FirebaseDatabase.getInstance().getReference().child("runmanager-163619");
+                DatabaseReference db_node = FirebaseDatabase.getInstance().getReference();
                 db_node.removeValue();
 
                 return true;
@@ -133,7 +134,12 @@ public class ChatActivity extends AppCompatActivity {
             });
 
         }
-        return true;
+        if (item.getItemId()==android.R.id.home){
+            onBackPressed();
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -141,4 +147,14 @@ public class ChatActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    private void initToolBar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() !=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+    }
+
 }
