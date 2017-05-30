@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity
             Intent chatIntent = new Intent(this, ChatActivity.class);
 
             startActivity(chatIntent);
-            
+
             finish();
 
         }

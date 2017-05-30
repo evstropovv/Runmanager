@@ -17,8 +17,8 @@
             android:title="@string/settings" />
         <item
             android:id="@+id/chat"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/settings" />
+            android:icon="@drawable/ic_menu_send"
+            android:title="Чат" />
 
     </group>
 </menu>

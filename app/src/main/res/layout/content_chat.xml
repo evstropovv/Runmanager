@@ -10,9 +10,13 @@
 
 
     <ListView
+        android:paddingTop="45dp"
         android:id="@+id/listViewChat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/editTextMessage"
+
+        />
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/editTextMessage"

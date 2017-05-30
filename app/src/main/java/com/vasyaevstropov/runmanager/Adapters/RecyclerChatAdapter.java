@@ -32,7 +32,7 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerChatAdapte
     public void onBindViewHolder(ChatViewHolder holder, int position) {
         ChatMessage message= messages.get(position);
         holder.tvLogin.setText(message.getUserName());
-        holder.tvTime.setText(message.getMessageTime());
+        holder.tvTime.setText(String.valueOf(message.getMessageTime()));
         holder.tvMessage.setText(message.getMessageText());
     }
 
