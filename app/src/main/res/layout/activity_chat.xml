@@ -34,6 +34,9 @@
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="20dp" />
 
-    <include layout="@layout/content_chat"/>
+    <include layout="@layout/content_chat"
+        android:layout_alignBottom="@+id/fab"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
