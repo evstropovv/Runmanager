@@ -59,7 +59,6 @@ public class ChatActivity extends AppCompatActivity {
                             FirebaseAuth.getInstance().getCurrentUser().getEmail()));
                     edit.setText("");
 
-                Snackbar.make(activity_chat, "Введите сообщение", Snackbar.LENGTH_SHORT).show();
 
             }
         });

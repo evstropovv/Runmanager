@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -60,7 +61,7 @@ import com.vasyaevstropov.runmanager.Services.SinhrService;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, OnFragmentListener {
 
-    Button btnStart;
+    com.cuboid.cuboidcirclebutton.CuboidButton btnStart;
     RelativeLayout relativeMap;
     TextView tvTime;
     TextView tvSpeed;
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeBtnTV() {
-        btnStart = (Button) findViewById(R.id.btnStart);
+        btnStart = (com.cuboid.cuboidcirclebutton.CuboidButton) findViewById(R.id.btnStart);
         tvSpeed = (TextView) findViewById(R.id.tvSpeed);
         tvTime = (TextView) findViewById(R.id.tvTime);
     }
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         mapFragment =
                 (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map_main);
-        relativeMap = (RelativeLayout)findViewById(R.id.relativeMap);
+        relativeMap = (RelativeLayout) findViewById(R.id.relativeMap);
         relativeMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity
                             Manifest.permission.READ_EXTERNAL_STORAGE},
                     100);
             return true;
-        }else {
+        } else {
             enableButtons();
         }
 
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.mus_player) {
             bottonSheetBehaviorListener(true);
-        }else if (id ==R.id.chat){
+        } else if (id == R.id.chat) {
 
             Intent chatIntent = new Intent(this, ChatActivity.class);
 
@@ -322,6 +323,16 @@ public class MainActivity extends AppCompatActivity
         LocationManager locationManager = (LocationManager) getSystemService
                 (Context.LOCATION_SERVICE);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         Location getLastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if (getLastLocation == null) {

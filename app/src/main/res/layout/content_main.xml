@@ -60,16 +60,37 @@
                 android:textAlignment="center"
                 android:textSize="25sp" />
 
-            <Button
-                android:layout_below="@id/tvSpeed"
+            <com.cuboid.cuboidcirclebutton.CuboidButton
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:text="@string/start"
                 android:id="@+id/btnStart"
+                android:textColor="@color/DarkSilver"
+                android:textSize="22sp"
+                app:cub_riple_effect="true"
+                app:cub_border_color="@color/silver"
+                app:cub_border_radius="4dp"
+                app:cub_color="@color/lightSilver"
+                app:cub_hover_color="@color/silver"
+                android:layout_below="@id/tvSpeed"
                 android:layout_marginTop="80dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="18dp"
-                android:text="@string/start"
-                android:textSize="20sp" />
+                />
+
+
+            <!--<Button-->
+
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@id/tvSpeed"-->
+                <!--android:id="@+id/btnStart"-->
+                <!--android:background="@drawable/rc_up"-->
+                <!--android:layout_marginTop="80dp"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_marginBottom="18dp"-->
+                <!--android:text="@string/start"-->
+                <!--android:textSize="20sp" />-->
 
 
         </RelativeLayout>

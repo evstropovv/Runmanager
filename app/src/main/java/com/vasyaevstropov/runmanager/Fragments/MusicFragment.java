@@ -44,14 +44,12 @@ public class MusicFragment extends Fragment {
     LinearLayout llBottomSheet;
     BottomSheetBehavior bottomSheetBehavior;
     RelativeLayout relativeLayout;
-    Button btnStart;
+    com.cuboid.cuboidcirclebutton.CuboidButton btnStart;
     RelativeLayout relativeMap;
     TextView tvTime;
     TextView tvSpeed;
 
     OnFragmentListener fragmentListener;
-
-
 
     private ArrayList<MediaContent> arrayMediaContent;
 
@@ -222,7 +220,7 @@ public class MusicFragment extends Fragment {
             }
         });
 
-        btnStart = (Button) getActivity().findViewById(R.id.btnStart);
+        btnStart = (com.cuboid.cuboidcirclebutton.CuboidButton) getActivity().findViewById(R.id.btnStart);
         tvSpeed = (TextView) getActivity().findViewById(R.id.tvSpeed);
         tvTime = (TextView) getActivity().findViewById(R.id.tvTime);
     }

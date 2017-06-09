@@ -5,7 +5,13 @@
     android:id="@+id/chatActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context="com.vasyaevstropov.runmanager.ChatActivity">
+
+    <include layout="@layout/content_chat"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -25,18 +31,13 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_dialog_email"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="20dp"
         android:layout_marginEnd="35dp"
-        android:layout_marginBottom="20dp" />
-
-    <include layout="@layout/content_chat"
-        android:layout_alignBottom="@+id/fab"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginRight="35dp"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </RelativeLayout>
