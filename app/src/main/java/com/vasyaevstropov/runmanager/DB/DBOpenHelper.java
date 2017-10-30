@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -13,13 +13,14 @@ import com.vasyaevstropov.runmanager.Models.Coordinates;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
     private Double long1, lat1, long2, lat2;
 
 
     public DBOpenHelper(Context context) {
-        super(context, "DBcoordinates", null, 1);
+        super(context, "DBcoordinate", null, 1);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     }
 
     public long insertCoordinates(Coordinates coordinates) {
-        long id = 0;
+        long id=0;
 
         SQLiteDatabase db = getWritableDatabase();
         try {
@@ -229,15 +230,15 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return arr;
     }
 
-    public ArrayList<ArrayList<String>> getListOfRuns() { //Вытягиваем с базы список пробежек.
+    public List<List<String>> getListOfRuns() { //Вытягиваем с базы список пробежек.
 
         SQLiteDatabase db = getReadableDatabase();
-        ArrayList<Integer> idList = new ArrayList<>();
-        ArrayList<String> dayOfWeekList = new ArrayList<>();
-        ArrayList<String> dateList = new ArrayList<>();
-        ArrayList<String> distanceList = new ArrayList<>();
-        ArrayList<String> numberRecordList = new ArrayList<>();
-        ArrayList<ArrayList<String>> listOfRuns = new ArrayList<>();
+        List<Integer> idList = new ArrayList<>();
+        List<String> dayOfWeekList = new ArrayList<>();
+        List<String> dateList = new ArrayList<>();
+        List<String> distanceList = new ArrayList<>();
+        List<String> numberRecordList = new ArrayList<>();
+        List<List<String>> listOfRuns = new ArrayList<>();
 
         try {
             Cursor c2 = db.query(Coordinates.TABLE_NAME_SEGMENT, null, null, null, null, null, null);

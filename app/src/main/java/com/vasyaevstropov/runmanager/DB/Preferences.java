@@ -1,8 +1,5 @@
 package com.vasyaevstropov.runmanager.DB;
 
-/**
- * Created by Вася on 22.04.2017.
- */
 
 
 import android.app.Activity;

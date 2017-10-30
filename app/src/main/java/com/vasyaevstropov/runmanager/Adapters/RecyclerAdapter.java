@@ -17,6 +17,7 @@ import com.vasyaevstropov.runmanager.R;
 import com.vasyaevstropov.runmanager.Activities.MapActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -26,15 +27,15 @@ import java.util.Locale;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
-    private ArrayList<String> dayOfWeekList;
+    private List<String> dayOfWeekList;
     private Context context;
     private String[] dayOfWeek;
-    private ArrayList<String> dateList;
-    private ArrayList<String> distanceList;
-    private ArrayList<String> numberRecordList;
+    private List<String> dateList;
+    private List<String> distanceList;
+    private List<String> numberRecordList;
     OnItemClickListener listener;
 
-    public RecyclerAdapter(Context ctx, ArrayList<String> dayOfWeekList, ArrayList<String> dateList, ArrayList<String> distanceList, ArrayList<String> numberRecordList) {
+    public RecyclerAdapter(Context ctx, List<String> dayOfWeekList, List<String> dateList, List<String> distanceList, List<String> numberRecordList) {
         this.dayOfWeekList = dayOfWeekList;
         this.context = ctx;
         dayOfWeek = ctx.getResources().getStringArray(R.array.day_of_week);

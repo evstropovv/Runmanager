@@ -33,7 +33,7 @@ public class PlayerNotification extends Notification {
     private Context ctx;
     private NotificationManager notificationManager;
     private MediaContent mediaContent;
-    Boolean isPlaing;
+    private Boolean isPlaing;
 
     public PlayerNotification(Context context, MediaContent mediaContent, Boolean isPlaying) {
         super();
@@ -49,7 +49,6 @@ public class PlayerNotification extends Notification {
             Toast.makeText(context, Build.VERSION.SDK_INT + "", Toast.LENGTH_LONG).show();
             buldNotify15(ctx);
         }
-
     }
 
     private void buldNotify15(Context ctx) {

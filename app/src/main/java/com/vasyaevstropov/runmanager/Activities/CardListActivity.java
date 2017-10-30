@@ -19,6 +19,7 @@ import com.vasyaevstropov.runmanager.MainActivity;
 import com.vasyaevstropov.runmanager.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 //Активити используется для
@@ -29,11 +30,11 @@ public class CardListActivity extends AppCompatActivity {
     private RecyclerView.Adapter recyclerAdapter;
     private RecyclerView.LayoutManager recyclerLayoutManager;
 
-    ArrayList<String> dayOfWeekList;
-    ArrayList<String> dateList;
-    ArrayList<String> distanceList;
-    ArrayList<String> numberRecordList;
-    ArrayList<ArrayList<String>> listOfRuns;
+    List<String> dayOfWeekList;
+    List<String> dateList;
+    List<String> distanceList;
+    List<String> numberRecordList;
+    List<List<String>> listOfRuns;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

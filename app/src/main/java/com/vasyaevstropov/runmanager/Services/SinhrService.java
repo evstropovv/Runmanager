@@ -15,10 +15,7 @@ import com.vasyaevstropov.runmanager.DB.DBOpenHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-/**
- * Created by Вася on 18.05.2017.
- */
+import java.util.List;
 
 public class SinhrService extends Service {
     private Integer i =0 ;
@@ -31,7 +28,7 @@ public class SinhrService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        AsyncTask asyncTask = new AsyncTask<Void,Void,Void>(){
+        new AsyncTask<Void,Void,Void>(){
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -41,7 +38,7 @@ public class SinhrService extends Service {
             protected Void doInBackground(Void... params) {
                 DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
 
-                ArrayList<ArrayList<String>> listOfRuns = dbOpenHelper.getListOfRuns();
+                List<List<String>> listOfRuns = dbOpenHelper.getListOfRuns();
 
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
@@ -52,7 +49,7 @@ public class SinhrService extends Service {
 
                 Log.d("GSON-SPEEDTABLE --","------------------------");
 
-                Log.d("GSON", gson.toJson(listOfRuns));
+                Log.d("Log.d","list of runs: " + new Gson().toJson(listOfRuns));
 
                 return null;
             }

@@ -39,7 +39,7 @@ public class GPSservice extends Service {
     private double lastX = 0, lastY = 0;
     int lastNumberRecord =0;
 
-    private SQLiteDatabase db;
+
     private Calendar calendar;
     private int dayOfWeek;
     private String date;
@@ -66,7 +66,9 @@ public class GPSservice extends Service {
         date = calendar.get(Calendar.DATE)+"."+calendar.get(Calendar.MONTH)+"."+calendar.get(Calendar.YEAR) ;
 
         //подключаем к БД
+
         final DBOpenHelper dbOpenHelper = new DBOpenHelper(getBaseContext());
+        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         lastNumberRecord = dbOpenHelper.getLastNumberRecord(db);
 
         listener = new LocationListener() {
@@ -77,7 +79,7 @@ public class GPSservice extends Service {
                     lastX = location.getLongitude();
                     lastY = location.getLatitude();
                 }
-                double dist =distance(location.getLongitude(), lastX, location.getLatitude(), lastY);
+                double dist = distance(location.getLongitude(), lastX, location.getLatitude(), lastY);
                 speed = dist/3/3600*1000*10000; //скорсоть = dist*1200
                 sumdistance = sumdistance + dist;
 

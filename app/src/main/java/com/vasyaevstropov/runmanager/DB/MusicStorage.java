@@ -11,10 +11,6 @@ import com.vasyaevstropov.runmanager.Models.MediaContent;
 
 import java.util.ArrayList;
 
-/**
- * Created by Вася on 29.04.2017.
- */
-
 public class MusicStorage {
 
     private ArrayList<MediaContent> arrayMediaContent;
